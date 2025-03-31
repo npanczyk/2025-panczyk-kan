@@ -109,7 +109,7 @@ def fnn_shap(model, X_train, X_test, input_names, output_names, save_as, k=50):
     return path
 
 def plot_shap(path, save_as, type='kan', width=0.2):
-    """_summary_
+    """Makes bar plots for shap values of a given dataset.
 
     Args:
         path (str): path to shap values file
@@ -145,6 +145,44 @@ def plot_shap(path, save_as, type='kan', width=0.2):
     plt.savefig(f'figures/shap/{save_as}.png', dpi=300)
     return fig, ax
 
+def plot_stacked(kan_path, fnn_path, save_as, width=0.2):
+    """Makes bar plots for shap values of KAN and FNN for one dataset stacked.
+
+    Args:
+        kan_path (str): path to shap values file for kan
+        fnn_path (str): path to shap values file for fnn
+        save_as (str): name of run
+        type (str, optional): Model type, either fnn or kan. Defaults to 'kan'.
+        width (float, optional): Width of plotted bars. Defaults to 0.2.
+
+    Returns:
+        tuple: (fig, ax) matplotlib objects
+    """
+    kan_shap_mean = pd.read_pickle(kan_path)
+    fnn_shap_mean = pd.read_pickle(fnn_path)
+    fig, ax = plt.subplots(figsize=(10,6))
+    x_positions = np.arange(len(kan_shap_mean.index))
+    output_names = list(kan_shap_mean.columns)
+    input_names = list(kan_shap_mean.index)
+    for i, col in enumerate(kan_shap_mean.columns):
+        label = f'{output_names[i]} KAN'
+        ax.bar(x_positions + i*width, kan_shap_mean[col], capsize=4, width=width, label=label)
+    for i, col in enumerate(fnn_shap_mean.columns):
+        label = f'{output_names[i]} FNN'
+        ax.bar(x_positions + i*width + width, fnn_shap_mean[col], capsize=4, width=width, label=label)
+    ax.set_ylabel("Mean of |SHAP Values|")
+    ax.set_yscale('log')
+    ax.legend(title='Output')
+    n = len(output_names)
+    ax.grid(True, which='both', axis='y', linestyle='--', color='gray', alpha=0.5)
+    ax.set_xticks(x_positions + (n-1)*width/2)
+    ax.set_xticklabels(input_names, rotation=45)
+    plt.tight_layout()
+    if not os.path.exists('figures/shap'):
+        os.makedirs('figures/shap')
+    plt.savefig(f'figures/shap/{save_as}_stacked.png', dpi=300)
+    return fig, ax
+
 if __name__=="__main__":
     datasets_dict = {
         'fp': [get_fp, 'equations/FP_2025-03-04.txt'],
@@ -175,8 +213,8 @@ if __name__=="__main__":
         }
 
     # # uncomment to calculate kan shap values
-    paths_dict = get_kan_shap(datasets_dict)
-    print(paths_dict)
+    # paths_dict = get_kan_shap(datasets_dict)
+    # print(paths_dict)
 
     ## uncomment to make shap kan plots
     # for model, path in shap_path_dict.items():
@@ -186,3 +224,5 @@ if __name__=="__main__":
     # for model, path in shap_path_dict.items():
     #     print_shap(path, save_as=f'{model}', type='kan')
 
+    # make stacked plot for CHF and HEAT
+    plot_stacked(kan_path=shap_path_dict['heat'], fnn_path='shap-values/HEAT_fnn_2025-03-18.pkl', save_as='HEAT', width=0.2)
