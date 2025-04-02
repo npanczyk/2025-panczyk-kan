@@ -120,7 +120,7 @@ def plot_shap(path, save_as, type='kan', width=0.2):
     Returns:
         tuple: (fig, ax) matplotlib objects
     """
-    plt.rcParams.update({'font.size': 14})
+    plt.rcParams.update({'font.size': 16})
     shap_mean = pd.read_pickle(path)
     fig, ax = plt.subplots(figsize=(10,6))
     x_positions = np.arange(len(shap_mean.index))
@@ -140,7 +140,7 @@ def plot_shap(path, save_as, type='kan', width=0.2):
     ax.grid(True, which='both', axis='y', linestyle='--', color='gray', alpha=0.5)
     ax.set_xticks(x_positions + (n-1)*width/2)
     ax.set_xticklabels(input_names, rotation=50)
-    plt.subplots_adjust(bottom=0.24)
+    plt.subplots_adjust(bottom=0.27, left=0.15)
     #plt.tight_layout()
     if not os.path.exists('figures/shap'):
         os.makedirs('figures/shap')
