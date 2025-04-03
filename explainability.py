@@ -160,6 +160,7 @@ def plot_stacked(kan_path, fnn_path, save_as, width=0.2):
     Returns:
         tuple: (fig, ax) matplotlib objects
     """
+    plt.rcParams.update({'font.size': 16})
     kan_shap_mean = pd.read_pickle(kan_path)
     fnn_shap_mean = pd.read_pickle(fnn_path)
     fig, ax = plt.subplots(figsize=(10,6))
@@ -201,16 +202,16 @@ if __name__=="__main__":
     }
 
     shap_path_dict = {
-        # 'fp': 'shap-values/FP_kan_2025-03-18.pkl', 
-        # 'bwr': 'shap-values/BWR_kan_2025-03-18.pkl', 
-        # 'heat': 'shap-values/HEAT_kan_2025-03-18.pkl', 
-        # 'htgr': 'shap-values/HTGR_kan_2025-03-18.pkl', 
-        # 'mitr_a': 'shap-values/MITR_A_kan_2025-03-18.pkl', 
-        # 'mitr_b': 'shap-values/MITR_B_kan_2025-03-18.pkl', 
-        # 'mitr_c': 'shap-values/MITR_C_kan_2025-03-18.pkl', 
-        # 'mitr': 'shap-values/MITR_kan_2025-03-18.pkl', 
-        # 'chf': 'shap-values/CHF_kan_2025-03-18.pkl', 
-        # 'rea': 'shap-values/REA_kan_2025-03-18.pkl', 
+        'fp': 'shap-values/FP_kan_2025-03-18.pkl', 
+        'bwr': 'shap-values/BWR_kan_2025-03-18.pkl', 
+        'heat': 'shap-values/HEAT_kan_2025-03-18.pkl', 
+        'htgr': 'shap-values/HTGR_kan_2025-03-18.pkl', 
+        'mitr_a': 'shap-values/MITR_A_kan_2025-03-18.pkl', 
+        'mitr_b': 'shap-values/MITR_B_kan_2025-03-18.pkl', 
+        'mitr_c': 'shap-values/MITR_C_kan_2025-03-18.pkl', 
+        'mitr': 'shap-values/MITR_kan_2025-03-18.pkl', 
+        'chf': 'shap-values/CHF_kan_2025-03-18.pkl', 
+        'rea': 'shap-values/REA_kan_2025-03-18.pkl', 
         'xs': 'shap-values/XS_kan_2025-03-18.pkl'
         }
 
@@ -219,12 +220,12 @@ if __name__=="__main__":
     # print(paths_dict)
 
     # uncomment to make shap kan plots
-    for model, path in shap_path_dict.items():
-        plot_shap(path, save_as=f'{model}_kan', type='kan', width=0.2)
+    # for model, path in shap_path_dict.items():
+    #     plot_shap(path, save_as=f'{model}_kan', type='kan', width=0.2)
 
     ## uncomment to print shap values
     # for model, path in shap_path_dict.items():
     #     print_shap(path, save_as=f'{model}', type='kan')
 
     # # make stacked plot for CHF and HEAT
-    # plot_stacked(kan_path=shap_path_dict['heat'], fnn_path='shap-values/HEAT_fnn_2025-03-18.pkl', save_as='HEAT', width=0.2)
+    plot_stacked(kan_path=shap_path_dict['chf'], fnn_path='shap-values/CHF_fnn_2025-03-18.pkl', save_as='CHF', width=0.2)
