@@ -189,7 +189,7 @@ class NKAN():
             y_test = scaler.inverse_transform(Y_test.detach().numpy())  # unscaled
         expressions = [ex_round(model.symbolic_formula()[0][i], 4) for i in range(n_outputs)]
         y_pred = y_pred_sym(expressions, num_vars, X_test, scaler, str(self.device))
-        metrics_df = metrics(self.dataset['output_labels'], y_test, y_pred, p=4)
+        metrics_df = metrics(self.dataset['output_labels'], y_test, y_pred, p=20)
         metrics_df['CONVERSION_TIME'] = end - start
         # save symbolic metrics to results 
         if not os.path.exists('results'):

@@ -105,7 +105,8 @@ def merge_metrics(name, kan, fnn):
     merged.sort_values(by='OUTPUT', inplace=True)
     merged.drop('CONVERSION_TIME', axis=1, inplace=True)
     merged.reset_index(drop=True, inplace=True)
-    to_latex = merged.to_latex(float_format="%.5f", index=False, longtable=True)
+    # to_latex = merged.to_latex(float_format="%.5f", index=False, longtable=True)
+    to_latex = merged.to_latex(index=False, longtable=True)
     print(to_latex)
     return merged
 
@@ -148,11 +149,16 @@ if __name__=="__main__":
         "lr_2": ["hp.choice", [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]],
     }
     # # To generate all results, uncomment and run lines below:
-    get_top(hyperparams_dict)
-    for key in hyperparams_dict.keys()
-        sort_params(hyperparams_dict[key])
-    print_space(space)
-    for name, files in results_dict.items():
-        merge_metrics(name, files[0], files[1])
+    # get_top(hyperparams_dict)
+    # for key in hyperparams_dict.keys()
+    #     sort_params(hyperparams_dict[key])
+    # print_space(space)
+    # for name, files in results_dict.items():
+    #     merge_metrics(name, files[0], files[1])
+
+    merge_metrics('xs', 'results/XS_2025-04-03_symetrics.csv', 'results/XS_2025-04-03_FNN.csv')
+    merge_metrics('htgr', 'results/HTGR_2025-04-03_symetrics.csv', 'results/HTGR_2025-04-03_FNN.csv')
+    merge_metrics('fp', 'results/FP_2025-04-03_symetrics.csv', 'results/FP_2025-04-03_FNN.csv')
+
 
 

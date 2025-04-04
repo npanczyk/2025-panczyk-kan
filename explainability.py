@@ -74,7 +74,7 @@ def get_kan_shap(datasets_dict):
         shap_paths[model] = path
     return shap_paths
 
-def fnn_shap(model, X_train, X_test, input_names, output_names, save_as, k=50):
+def fnn_shap(model, X_train, X_test, input_names, output_names, save_as, k=50, kcheck=False):
     """gets feature importances using kernel shap for an fnn
 
     Args:
@@ -98,14 +98,15 @@ def fnn_shap(model, X_train, X_test, input_names, output_names, save_as, k=50):
         os.makedirs('shap-values')
     path = f'shap-values/{save_as}_fnn_{str(dt.date.today())}.pkl'
     shap_mean.to_pickle(path)
-    fig, ax = plt.subplots()
-    ax.scatter(X_train[:,0], X_train[:,1], label='X_train')
-    ax.scatter(X_train_summary.data[:,0], X_train_summary.data[:,1], label='X_train_summary', color='red')
-    ax.legend()
-    ax.set_xlabel(f'{input_names[0]}')
-    ax.set_ylabel(f'{input_names[1]}')
-    ax.set_title(f'k = {k}')
-    plt.savefig(f'figures/fnn-shap/{save_as}_KCHECK.png', dpi=300)
+    if kcheck:
+        fig, ax = plt.subplots()
+        ax.scatter(X_train[:,0], X_train[:,1], label='X_train')
+        ax.scatter(X_train_summary.data[:,0], X_train_summary.data[:,1], label='X_train_summary', color='red')
+        ax.legend()
+        ax.set_xlabel(f'{input_names[0]}')
+        ax.set_ylabel(f'{input_names[1]}')
+        ax.set_title(f'k = {k}')
+        plt.savefig(f'figures/fnn-shap/{save_as}_KCHECK.png', dpi=300)
     return path
 
 def plot_shap(path, save_as, type='kan', width=0.2):
@@ -189,30 +190,30 @@ def plot_stacked(kan_path, fnn_path, save_as, width=0.2):
 if __name__=="__main__":
     datasets_dict = {
         'fp': [get_fp, 'equations/FP_2025-03-04.txt'],
-        'bwr': [get_bwr, 'equations/BWR_2025-03-05.txt'],
-        'heat': [get_heat, 'equations/HEAT_2025-03-05.txt'],
+        # 'bwr': [get_bwr, 'equations/BWR_2025-03-05.txt'],
+        # 'heat': [get_heat, 'equations/HEAT_2025-03-05.txt'],
         'htgr': [get_htgr, 'equations/HTGR_2025-03-05.txt'],
-        'mitr_a': [partial(get_mitr, region='A'), 'equations/MITR_A_2025-03-05.txt'],
-        'mitr_b': [partial(get_mitr, region='B'), 'equations/MITR_B_2025-03-05.txt'],
-        'mitr_c': [partial(get_mitr, region='C'), 'equations/MITR_C_2025-03-05.txt'],
-        'mitr': [partial(get_mitr, region='FULL'), 'equations/MITR_2025-03-05.txt'],
-        'chf': [get_chf, 'equations/CHF_2025-03-05.txt'],
-        'rea': [get_rea, 'equations/REA_2025-03-05.txt'],
+        # 'mitr_a': [partial(get_mitr, region='A'), 'equations/MITR_A_2025-03-05.txt'],
+        # 'mitr_b': [partial(get_mitr, region='B'), 'equations/MITR_B_2025-03-05.txt'],
+        # 'mitr_c': [partial(get_mitr, region='C'), 'equations/MITR_C_2025-03-05.txt'],
+        # 'mitr': [partial(get_mitr, region='FULL'), 'equations/MITR_2025-03-05.txt'],
+        # 'chf': [get_chf, 'equations/CHF_2025-03-05.txt'],
+        # 'rea': [get_rea, 'equations/REA_2025-03-05.txt'],
         'xs': [get_xs, 'equations/XS_2025-03-05.txt']
     }
 
     shap_path_dict = {
-        'fp': 'shap-values/FP_kan_2025-03-18.pkl', 
-        'bwr': 'shap-values/BWR_kan_2025-03-18.pkl', 
-        'heat': 'shap-values/HEAT_kan_2025-03-18.pkl', 
-        'htgr': 'shap-values/HTGR_kan_2025-03-18.pkl', 
-        'mitr_a': 'shap-values/MITR_A_kan_2025-03-18.pkl', 
-        'mitr_b': 'shap-values/MITR_B_kan_2025-03-18.pkl', 
-        'mitr_c': 'shap-values/MITR_C_kan_2025-03-18.pkl', 
-        'mitr': 'shap-values/MITR_kan_2025-03-18.pkl', 
-        'chf': 'shap-values/CHF_kan_2025-03-18.pkl', 
-        'rea': 'shap-values/REA_kan_2025-03-18.pkl', 
-        'xs': 'shap-values/XS_kan_2025-03-18.pkl'
+        'fp': 'shap-values/FP_kan_2025-04-03.pkl', 
+        # 'bwr': 'shap-values/BWR_kan_2025-03-18.pkl', 
+        # 'heat': 'shap-values/HEAT_kan_2025-03-18.pkl', 
+        'htgr': 'shap-values/HTGR_kan_2025-04-03.pkl', 
+        # 'mitr_a': 'shap-values/MITR_A_kan_2025-03-18.pkl', 
+        # 'mitr_b': 'shap-values/MITR_B_kan_2025-03-18.pkl', 
+        # 'mitr_c': 'shap-values/MITR_C_kan_2025-03-18.pkl', 
+        # 'mitr': 'shap-values/MITR_kan_2025-03-18.pkl', 
+        # 'chf': 'shap-values/CHF_kan_2025-03-18.pkl', 
+        # 'rea': 'shap-values/REA_kan_2025-03-18.pkl', 
+        'xs': 'shap-values/XS_kan_2025-04-03.pkl'
         }
 
     # # uncomment to calculate kan shap values
@@ -220,12 +221,12 @@ if __name__=="__main__":
     # print(paths_dict)
 
     # uncomment to make shap kan plots
-    # for model, path in shap_path_dict.items():
-    #     plot_shap(path, save_as=f'{model}_kan', type='kan', width=0.2)
+    for model, path in shap_path_dict.items():
+        plot_shap(path, save_as=f'{model}_kan', type='kan', width=0.2)
 
     ## uncomment to print shap values
     # for model, path in shap_path_dict.items():
     #     print_shap(path, save_as=f'{model}', type='kan')
 
     # # make stacked plot for CHF and HEAT
-    plot_stacked(kan_path=shap_path_dict['chf'], fnn_path='shap-values/CHF_fnn_2025-03-18.pkl', save_as='CHF', width=0.2)
+    # plot_stacked(kan_path=shap_path_dict['chf'], fnn_path='shap-values/CHF_fnn_2025-03-18.pkl', save_as='CHF', width=0.2)

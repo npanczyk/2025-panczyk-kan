@@ -21,7 +21,7 @@ rea_best = {'depth': 1, 'grid': 6, 'k': 8, 'lamb': 3.79496703629217e-05, 'lamb_e
 xs_best = {'depth': 2, 'grid': 9, 'k': 4, 'lamb': 0.00039029273996368227, 'lamb_entropy': 0.42860645226254324, 'lr_1': 1.25, 'lr_2': 1.25, 'reg_metric': 'edge_forward_spline_u', 'steps': 100}
 
 def run_model(device, dataset, params, run_name, lib=None):
-    kan = NKAN(dataset, 83, device, params)
+    kan = NKAN(dataset, 42, device, params)
     model = kan.get_model()
     spline_metrics = kan.get_metrics(model, run_name)
     equation = kan.get_equation(model, run_name, simple=0, lib=None)
@@ -34,15 +34,15 @@ if __name__=="__main__":
     os.environ["CUDA_VISIBLE_DEVICES"]="2"
     datasets_dict = {
         'fp': [get_fp, fp_best],
-        'bwr': [get_bwr, bwr_best],
-        'heat': [get_heat, heat_best],
+        # 'bwr': [get_bwr, bwr_best],
+        # 'heat': [get_heat, heat_best],
         'htgr': [get_htgr, htgr_best],
-        'mitr_a': [partial(get_mitr, region='A'), mitr_a_best],
-        'mitr_b': [partial(get_mitr, region='B'), mitr_b_best],
-        'mitr_c': [partial(get_mitr, region='C'), mitr_c_best],
-        'mitr': [partial(get_mitr, region='FULL'), mitr_best],
-        'chf': [get_chf, chf_best],
-        'rea': [get_rea, rea_best],
+        # 'mitr_a': [partial(get_mitr, region='A'), mitr_a_best],
+        # 'mitr_b': [partial(get_mitr, region='B'), mitr_b_best],
+        # 'mitr_c': [partial(get_mitr, region='C'), mitr_c_best],
+        # 'mitr': [partial(get_mitr, region='FULL'), mitr_best],
+        # 'chf': [get_chf, chf_best],
+        # 'rea': [get_rea, rea_best],
         'xs': [get_xs, xs_best]
     }
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

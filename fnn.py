@@ -91,7 +91,7 @@ def fit_fnn(params, plot=False, save_as=None):
     y_preds, y_tests = get_metrics(model, test_loader, dataset['y_scaler'], dataset, save_as=save_as)
     return model.cpu(), path
 
-def get_metrics(model, test_loader, scaler, dataset, save_as, p=5):
+def get_metrics(model, test_loader, scaler, dataset, save_as, p=20):
     """This function generates metrics on the original model training call, not with a loaded model.
 
     Args:
@@ -209,24 +209,24 @@ if __name__=="__main__":
     torch.set_default_dtype(torch.float64)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     pymaise_params = {
-        'chf': {
-            'hidden_nodes' : [231, 138, 267],
-            'num_epochs' : 200,
-            'batch_size' : 64,
-            'learning_rate' : 0.0009311391232267503,
-            'use_dropout': True,
-            'dropout_prob': 0.4995897609454529,
-            'dataset': get_chf
-        },
-        'bwr': {
-            'hidden_nodes' : [511, 367, 563, 441, 162],
-            'num_epochs' : 200,
-            'batch_size' : 8,
-            'learning_rate' : 0.0009660778027367906,
-            'use_dropout': False,
-            'dropout_prob': 0,
-            'dataset': get_bwr
-        },
+        # 'chf': {
+        #     'hidden_nodes' : [231, 138, 267],
+        #     'num_epochs' : 200,
+        #     'batch_size' : 64,
+        #     'learning_rate' : 0.0009311391232267503,
+        #     'use_dropout': True,
+        #     'dropout_prob': 0.4995897609454529,
+        #     'dataset': get_chf
+        # },
+        # 'bwr': {
+        #     'hidden_nodes' : [511, 367, 563, 441, 162],
+        #     'num_epochs' : 200,
+        #     'batch_size' : 8,
+        #     'learning_rate' : 0.0009660778027367906,
+        #     'use_dropout': False,
+        #     'dropout_prob': 0,
+        #     'dataset': get_bwr
+        # },
         'fp': {
             'hidden_nodes' : [66, 400],
             'num_epochs' : 200,
@@ -236,15 +236,15 @@ if __name__=="__main__":
             'dropout_prob': 0,
             'dataset': get_fp
         },
-        'heat': {
-            'hidden_nodes' : [251, 184, 47],
-            'num_epochs' : 200,
-            'batch_size' : 8,
-            'learning_rate' : 0.0008821712781015931,
-            'use_dropout': False,
-            'dropout_prob': 0,
-            'dataset': get_heat
-        },
+        # 'heat': {
+        #     'hidden_nodes' : [251, 184, 47],
+        #     'num_epochs' : 200,
+        #     'batch_size' : 8,
+        #     'learning_rate' : 0.0008821712781015931,
+        #     'use_dropout': False,
+        #     'dropout_prob': 0,
+        #     'dataset': get_heat
+        # },
         'htgr': {
             'hidden_nodes' : [199, 400],
             'num_epochs' : 200,
@@ -254,24 +254,24 @@ if __name__=="__main__":
             'dropout_prob': 0.3225718287912892,
             'dataset': get_htgr
         },
-        'mitr': {
-            'hidden_nodes' : [309],
-            'num_epochs' : 200,
-            'batch_size' : 8,
-            'learning_rate' : 0.0008321972582830564,
-            'use_dropout': False,
-            'dropout_prob': 0,
-            'dataset': partial(get_mitr, region='FULL')            
-        },
-        'rea': {
-            'hidden_nodes' : [326, 127],
-            'num_epochs' : 200,
-            'batch_size' : 8,
-            'learning_rate' : 0.0009444837105276597,
-            'use_dropout': False,
-            'dropout_prob': 0,
-            'dataset': get_rea            
-        },
+        # 'mitr': {
+        #     'hidden_nodes' : [309],
+        #     'num_epochs' : 200,
+        #     'batch_size' : 8,
+        #     'learning_rate' : 0.0008321972582830564,
+        #     'use_dropout': False,
+        #     'dropout_prob': 0,
+        #     'dataset': partial(get_mitr, region='FULL')            
+        # },
+        # 'rea': {
+        #     'hidden_nodes' : [326, 127],
+        #     'num_epochs' : 200,
+        #     'batch_size' : 8,
+        #     'learning_rate' : 0.0009444837105276597,
+        #     'use_dropout': False,
+        #     'dropout_prob': 0,
+        #     'dataset': get_rea            
+        # },
         'xs': {
             'hidden_nodes' : [95],
             'num_epochs' : 200,
@@ -281,56 +281,56 @@ if __name__=="__main__":
             'dropout_prob': 0,
             'dataset': get_xs            
         },
-        'mitr_a': {
-            'hidden_nodes' : [309],
-            'num_epochs' : 200,
-            'batch_size' : 8,
-            'learning_rate' : 0.0008321972582830564,
-            'use_dropout': False,
-            'dropout_prob': 0,
-            'dataset': partial(get_mitr, region='A')            
-        },
-        'mitr_b': {
-            'hidden_nodes' : [309],
-            'num_epochs' : 200,
-            'batch_size' : 8,
-            'learning_rate' : 0.0008321972582830564,
-            'use_dropout': False,
-            'dropout_prob': 0,
-            'dataset': partial(get_mitr, region='B')            
-        },
-        'mitr_c': {
-            'hidden_nodes' : [309],
-            'num_epochs' : 200,
-            'batch_size' : 8,
-            'learning_rate' : 0.0008321972582830564,
-            'use_dropout': False,
-            'dropout_prob': 0,
-            'dataset': partial(get_mitr, region='C')            
-        },        
+        # 'mitr_a': {
+        #     'hidden_nodes' : [309],
+        #     'num_epochs' : 200,
+        #     'batch_size' : 8,
+        #     'learning_rate' : 0.0008321972582830564,
+        #     'use_dropout': False,
+        #     'dropout_prob': 0,
+        #     'dataset': partial(get_mitr, region='A')            
+        # },
+        # 'mitr_b': {
+        #     'hidden_nodes' : [309],
+        #     'num_epochs' : 200,
+        #     'batch_size' : 8,
+        #     'learning_rate' : 0.0008321972582830564,
+        #     'use_dropout': False,
+        #     'dropout_prob': 0,
+        #     'dataset': partial(get_mitr, region='B')            
+        # },
+        # 'mitr_c': {
+        #     'hidden_nodes' : [309],
+        #     'num_epochs' : 200,
+        #     'batch_size' : 8,
+        #     'learning_rate' : 0.0008321972582830564,
+        #     'use_dropout': False,
+        #     'dropout_prob': 0,
+        #     'dataset': partial(get_mitr, region='C')            
+        # },        
     }
     model_path_dict = {
-        'chf': [get_chf, 'models/CHF_2025-03-17.pt'],
-        'bwr': [get_bwr, 'models/BWR_2025-03-17.pt'], 
-        'fp': [get_fp, 'models/FP_2025-03-17.pt'], 
-        'heat': [get_heat, 'models/HEAT_2025-03-17.pt'], 
-        'htgr': [get_htgr, 'models/HTGR_2025-03-17.pt'], 
-        'mitr': [partial(get_mitr, region='FULL'), 'models/MITR_2025-03-17.pt'], 
-        'rea': [get_rea, 'models/REA_2025-03-17.pt'], 
-        'xs': [get_xs, 'models/XS_2025-03-17.pt'], 
-        'mitr_a': [partial(get_mitr, region='A'), 'models/MITR_A_2025-03-17.pt'], 
-        'mitr_b': [partial(get_mitr, region='B'), 'models/MITR_B_2025-03-17.pt'], 
-        'mitr_c': [partial(get_mitr, region='C'), 'models/MITR_C_2025-03-17.pt']
+        # 'chf': [get_chf, 'models/CHF_2025-03-17.pt'],
+        # 'bwr': [get_bwr, 'models/BWR_2025-03-17.pt'], 
+        # 'fp': [get_fp, 'models/FP_2025-04-03.pt'], 
+        # 'heat': [get_heat, 'models/HEAT_2025-03-17.pt'], 
+        'htgr': [get_htgr, 'models/HTGR_2025-04-03.pt'], 
+        # 'mitr': [partial(get_mitr, region='FULL'), 'models/MITR_2025-03-17.pt'], 
+        # 'rea': [get_rea, 'models/REA_2025-03-17.pt'], 
+        'xs': [get_xs, 'models/XS_2025-04-03.pt'], 
+        # 'mitr_a': [partial(get_mitr, region='A'), 'models/MITR_A_2025-03-17.pt'], 
+        # 'mitr_b': [partial(get_mitr, region='B'), 'models/MITR_B_2025-03-17.pt'], 
+        # 'mitr_c': [partial(get_mitr, region='C'), 'models/MITR_C_2025-03-17.pt']
     }
     shap_path_dict = {
         # 'chf': 'shap-values/CHF_fnn_2025-03-18.pkl', 
         # 'bwr': 'shap-values/BWR_fnn_2025-03-18.pkl', 
-        # 'fp': 'shap-values/FP_fnn_2025-03-18.pkl', 
+        'fp': 'shap-values/FP_fnn_2025-04-03.pkl', 
         # 'heat': 'shap-values/HEAT_fnn_2025-03-18.pkl', 
-        # 'htgr': 'shap-values/HTGR_fnn_2025-03-18.pkl', 
+        'htgr': 'shap-values/HTGR_fnn_2025-04-03.pkl', 
         # 'mitr': 'shap-values/MITR_fnn_2025-03-18.pkl', 
         # 'rea': 'shap-values/REA_fnn_2025-03-18.pkl', 
-        'xs': 'shap-values/XS_fnn_2025-03-18.pkl', 
+        'xs': 'shap-values/XS_fnn_2025-04-03.pkl', 
         # 'mitr_a': 'shap-values/MITR_A_fnn_2025-03-18.pkl', 
         # 'mitr_b': 'shap-values/MITR_B_fnn_2025-03-18.pkl', 
         # 'mitr_c': 'shap-values/MITR_C_fnn_2025-03-18.pkl'
