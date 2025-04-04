@@ -325,15 +325,15 @@ if __name__=="__main__":
     shap_path_dict = {
         # 'chf': 'shap-values/CHF_fnn_2025-03-18.pkl', 
         # 'bwr': 'shap-values/BWR_fnn_2025-03-18.pkl', 
-        'fp': 'shap-values/FP_fnn_2025-04-03.pkl', 
+        # 'fp': 'shap-values/FP_fnn_2025-04-03.pkl', 
         # 'heat': 'shap-values/HEAT_fnn_2025-03-18.pkl', 
-        'htgr': 'shap-values/HTGR_fnn_2025-04-03.pkl', 
+        # 'htgr': 'shap-values/HTGR_fnn_2025-04-03.pkl', 
         # 'mitr': 'shap-values/MITR_fnn_2025-03-18.pkl', 
         # 'rea': 'shap-values/REA_fnn_2025-03-18.pkl', 
-        'xs': 'shap-values/XS_fnn_2025-04-03.pkl', 
+        # 'xs': 'shap-values/XS_fnn_2025-04-03.pkl', 
         # 'mitr_a': 'shap-values/MITR_A_fnn_2025-03-18.pkl', 
         # 'mitr_b': 'shap-values/MITR_B_fnn_2025-03-18.pkl', 
-        # 'mitr_c': 'shap-values/MITR_C_fnn_2025-03-18.pkl'
+        'mitr_c': 'shap-values/MITR_C_fnn_2025-03-18.pkl'
         }
 
     # # STEP 1: train FNN models and get metrics
@@ -345,7 +345,7 @@ if __name__=="__main__":
 
     # # STEP 3: plot shap values, need shap path dict from Step 2
     for model, path in shap_path_dict.items():
-        plot_shap(path, save_as=f'{model}_fnn', type='fnn', width=0.2)
+        plot_shap(path, save_as=f'{model}_fnn', type='fnn', width=0.05)
 
     # # STEP 4 (optional): print shap values and save to csv
     # for model, path in shap_path_dict.items():

@@ -203,17 +203,17 @@ if __name__=="__main__":
     }
 
     shap_path_dict = {
-        'fp': 'shap-values/FP_kan_2025-04-03.pkl', 
+        # 'fp': 'shap-values/FP_kan_2025-04-03.pkl', 
         # 'bwr': 'shap-values/BWR_kan_2025-03-18.pkl', 
         # 'heat': 'shap-values/HEAT_kan_2025-03-18.pkl', 
-        'htgr': 'shap-values/HTGR_kan_2025-04-03.pkl', 
+        # 'htgr': 'shap-values/HTGR_kan_2025-04-03.pkl', 
         # 'mitr_a': 'shap-values/MITR_A_kan_2025-03-18.pkl', 
         # 'mitr_b': 'shap-values/MITR_B_kan_2025-03-18.pkl', 
-        # 'mitr_c': 'shap-values/MITR_C_kan_2025-03-18.pkl', 
+        'mitr_c': 'shap-values/MITR_C_kan_2025-03-18.pkl', 
         # 'mitr': 'shap-values/MITR_kan_2025-03-18.pkl', 
         # 'chf': 'shap-values/CHF_kan_2025-03-18.pkl', 
         # 'rea': 'shap-values/REA_kan_2025-03-18.pkl', 
-        'xs': 'shap-values/XS_kan_2025-04-03.pkl'
+        # 'xs': 'shap-values/XS_kan_2025-04-03.pkl'
         }
 
     # # uncomment to calculate kan shap values
@@ -222,7 +222,7 @@ if __name__=="__main__":
 
     # uncomment to make shap kan plots
     for model, path in shap_path_dict.items():
-        plot_shap(path, save_as=f'{model}_kan', type='kan', width=0.2)
+        plot_shap(path, save_as=f'{model}_kan', type='kan', width=0.05)
 
     ## uncomment to print shap values
     # for model, path in shap_path_dict.items():
