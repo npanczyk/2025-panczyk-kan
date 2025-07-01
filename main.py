@@ -51,7 +51,8 @@ class NKAN():
             'test_input':self.dataset['test_input'],
             'test_label':self.dataset['test_output']
         }
-        self.model = KAN(width=self.width, grid=self.grid, k=self.k, seed=self.seed, device=self.device)
+        self.model = KAN(width=self.width, grid=self.grid, k=self.k, seed=self.seed, device=self.device, spline_kind="sp_spline")
+        # ADDED SP_SPLINE FOR ARSEN DEMO
         
     
 
