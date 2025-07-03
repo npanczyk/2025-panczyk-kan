@@ -20,10 +20,11 @@ chf_best = {'depth': 1, 'grid': 9, 'k': 2, 'lamb': 5.123066656699474e-06, 'lamb_
 rea_best = {'depth': 1, 'grid': 6, 'k': 8, 'lamb': 3.79496703629217e-05, 'lamb_entropy': 0.006504868427044119, 'lr_1': 2, 'lr_2': 0.5, 'reg_metric': 'edge_forward_sum', 'steps': 25}
 xs_best = {'depth': 2, 'grid': 9, 'k': 4, 'lamb': 0.00039029273996368227, 'lamb_entropy': 0.42860645226254324, 'lr_1': 1.25, 'lr_2': 1.25, 'reg_metric': 'edge_forward_spline_u', 'steps': 100}
 
-def run_model(device, dataset, params, run_name, lib=None):
-    kan = NKAN(dataset, 83, device, params)
+def run_model(device, dataset, params, run_name, spline_kind, lib=None):
+    kan = NKAN(dataset, 42, device, params, spline_kind)
     model = kan.get_model()
     spline_metrics = kan.get_metrics(model, run_name)
+    # SP SPLINE FAILS TO GENERATE EQUATIONSxs
     equation = kan.get_equation(model, run_name, simple=0, lib=None)
     return
 
@@ -33,17 +34,17 @@ if __name__=="__main__":
         shutil.rmtree("model")
     os.environ["CUDA_VISIBLE_DEVICES"]="2"
     datasets_dict = {
-        'fp': [get_fp, fp_best],
-        'bwr': [get_bwr, bwr_best],
-        'heat': [get_heat, heat_best],
-        'htgr': [get_htgr, htgr_best],
-        'mitr_a': [partial(get_mitr, region='A'), mitr_a_best],
-        'mitr_b': [partial(get_mitr, region='B'), mitr_b_best],
-        'mitr_c': [partial(get_mitr, region='C'), mitr_c_best],
-        'mitr': [partial(get_mitr, region='FULL'), mitr_best],
+        # 'fp': [get_fp, fp_best],
+        # 'bwr': [get_bwr, bwr_best],
+        # 'heat': [get_heat, heat_best],
+        # 'htgr': [get_htgr, htgr_best],
+        # 'mitr_a': [partial(get_mitr, region='A'), mitr_a_best],
+        # 'mitr_b': [partial(get_mitr, region='B'), mitr_b_best],
+        # 'mitr_c': [partial(get_mitr, region='C'), mitr_c_best],
+        # 'mitr': [partial(get_mitr, region='FULL'), mitr_best],
         'chf': [get_chf, chf_best],
-        'rea': [get_rea, rea_best],
-        'xs': [get_xs, xs_best]
+        # 'rea': [get_rea, rea_best],
+        # 'xs': [get_xs, xs_best]
     }
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     for model, info in datasets_dict.items():
@@ -51,5 +52,6 @@ if __name__=="__main__":
             device=device, 
             dataset=info[0](cuda=True), 
             params=info[1], 
-            run_name=f"{model.upper()}_{str(dt.date.today())}")
+            run_name=f"{model.upper()}_spspline_{str(dt.date.today())}",
+            spline_kind="b_spline")
 

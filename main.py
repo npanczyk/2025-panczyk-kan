@@ -17,7 +17,7 @@ import time
 
 
 class NKAN():
-    def __init__(self, dataset, seed, device, params):
+    def __init__(self, dataset, seed, device, params, spline_kind):
         """Class that creates and trains a KAN model based on an input dataset.
 
         Args:
@@ -51,7 +51,8 @@ class NKAN():
             'test_input':self.dataset['test_input'],
             'test_label':self.dataset['test_output']
         }
-        self.model = KAN(width=self.width, grid=self.grid, k=self.k, seed=self.seed, device=self.device, spline_kind="sp_spline")
+        self.spline_kind = spline_kind
+        self.model = KAN(width=self.width, grid=self.grid, k=self.k, seed=self.seed, device=self.device, spline_kind=self.spline_kind)
         # ADDED SP_SPLINE FOR ARSEN DEMO
         
     
