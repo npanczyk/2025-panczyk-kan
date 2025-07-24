@@ -224,32 +224,47 @@ def tune_case(tuner):
 if __name__ == "__main__":
     os.environ["CUDA_VISIBLE_DEVICES"]="1"
     # WARNING: DEFINING TUNER OBJECT WILL DELETE FILES WITH THAT EXACT RUN NAME!
-    datasets_dict = {
-        # 'htgr': get_htgr,
-        # 'xs': get_xs,
-        # 'bwr': get_bwr,
-        # 'rea': get_rea,
-        # 'chf': get_chf,
-        # 'fp': get_fp,
-        # 'heat': get_heat,
-    }
-    regions = ['A', 'B', 'C', 'FULL']
-    for region in regions[3:]:
-        datasets_dict[f'mitr_{region}'] = partial(get_mitr, region=region)
-    for model, dataset in datasets_dict.items():
-        print(f'MODEL: {model}')    
-        tuner = Tuner(
-                        dataset = dataset(cuda=True), 
-                        run_name = f"{model.upper()}_{str(dt.date.today())}", 
-                        space = set_space(), 
-                        max_evals = 1, #make 200
-                        seed = 42, 
-                        device = torch.device("cuda" if torch.cuda.is_available() else "cpu"),
-                        symbolic = True)
-        try:
-            tune_case(tuner)
-        except Exception as e:
-            print(f"{model.upper()} TUNING INTERRUPTED! Error: {e}")
+    # datasets_dict = {
+    #     # 'htgr': get_htgr,
+    #     # 'xs': get_xs,
+    #     # 'bwr': get_bwr,
+    #     # 'rea': get_rea,
+    #     # 'chf': get_chf,
+    #     # 'fp': get_fp,
+    #     # 'heat': get_heat,
+    # }
+    # regions = ['A', 'B', 'C', 'FULL']
+    # for region in regions[3:]:
+    #     datasets_dict[f'mitr_{region}'] = partial(get_mitr, region=region)
+    # for model, dataset in datasets_dict.items():
+    #     print(f'MODEL: {model}')    
+    #     tuner = Tuner(
+    #                     dataset = dataset(cuda=True), 
+    #                     run_name = f"{model.upper()}_{str(dt.date.today())}", 
+    #                     space = set_space(), 
+    #                     max_evals = 1, #make 200
+    #                     seed = 42, 
+    #                     device = torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+    #                     symbolic = True)
+    #     try:
+    #         tune_case(tuner)
+    #     except Exception as e:
+    #         print(f"{model.upper()} TUNING INTERRUPTED! Error: {e}")
+
+    with open(snakemake.input.dataset, 'rb') as f:
+        dataset = pickle.load(f)
+    tuner = Tuner(
+                    dataset = dataset, 
+                    run_name = snakemake.params.run_name, 
+                    space = set_space(), 
+                    max_evals = snakemake.params.max_evals,
+                    seed = snakemake.params.seed, 
+                    device = torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+                    symbolic = True)
+    try:
+        tune_case(tuner)
+    except Exception as e:
+        print(f"TUNING INTERRUPTED! Error: {e}")
 
 
 

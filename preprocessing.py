@@ -4,6 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, Normalizer
 import torch
 import xarray as xr
+import pickle
+from functools import partial
 
 
 def get_chf(synthetic=False, cuda=False):
@@ -618,3 +620,22 @@ def mult_samples(data):
     sym_data.loc[:, theta_cols] = sym_data.loc[:, theta_cols] % (2 * np.pi)
 
     return sym_data
+
+if __name__=="__main__":
+    funcs = {
+        'CHF': get_chf,
+        'BWR': get_bwr,
+        'MITR_A': partial(get_mitr, region='A'),
+        'MITR_B': partial(get_mitr, region='B'),
+        'MITR_C': partial(get_mitr, region='C'),
+        'MITR': get_mitr,
+        'XS': get_xs,
+        'FP': get_fp,
+        'HEAT': get_heat,
+        'REA': get_rea,
+        'HTGR': get_htgr
+    }
+    for i, case in enumerate(snakemake.params.d_list):
+        data_dict = funcs[case](cuda=True)
+        with open(snakemake.output.dataset[i], "wb") as pfile:
+            pickle.dump(data_dict, pfile)
