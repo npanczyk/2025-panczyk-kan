@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle
 
 def plot_feature_importances(importances, labels):
     fig, ax = plt.subplots(figsize =(8, 10))
@@ -40,5 +41,25 @@ def plot_pred_v_true(y_preds, y_tests, save_as, output, color='magenta'):
     ax.legend()
     ax.set_xlabel("Predicted")
     ax.set_ylabel("Actual")
-    fig.savefig(f'figures/pred-v-true/{save_as}.png', dpi=300)
+    fig.savefig(save_as, dpi=300)
 
+if __name__=="__main__":
+    for case, y_preds_file, y_tests_file, dataset_file, plot in zip(
+        snakemake.params.d_list,
+        snakemake.input.y_preds,
+        snakemake.input.y_tests,
+        snakemake.input.datasets,
+        snakemake.output.plots):
+        with open(dataset_file, 'rb') as f1:
+            dataset = pickle.load(f1)
+        with open(y_preds_file, 'rb') as f2:
+            y_preds = pickle.load(f2)
+        with open(y_tests_file, 'rb') as f3:
+            y_tests = pickle.load(f3)
+        plot_pred_v_true(
+            y_preds=y_preds[:,0],
+            y_tests=y_tests[:,0],
+            save_as=plot,
+            output=dataset['output_labels'][0],
+            color='skyblue'
+        )

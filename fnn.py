@@ -34,9 +34,8 @@ class FNN(nn.Module):
     def forward(self, x):
         return self.model(x)
 
-def fit_fnn(params, plot=False, save_as=None):
+def fit_fnn(dataset, params, plot=False, save_as=None):
     # define hyperparams
-    dataset = params['dataset'](cuda=True)
     input_size = dataset['train_input'].shape[1]
     print(f'Input Size: {input_size}')
     hidden_nodes = params['hidden_nodes']
@@ -86,10 +85,10 @@ def fit_fnn(params, plot=False, save_as=None):
 
     # save model
     path = f'models/{save_as}.pt'
-    torch.save(model.state_dict(), path)
+    # torch.save(model.state_dict(), path)
     # evaluate model performance
     y_preds, y_tests = get_metrics(model, test_loader, dataset['y_scaler'], dataset, save_as=save_as)
-    return model.cpu(), path
+    return model.cpu(), y_preds, y_tests
 
 def get_metrics(model, test_loader, scaler, dataset, save_as, p=20):
     """This function generates metrics on the original model training call, not with a loaded model.
@@ -151,26 +150,41 @@ def get_metrics(model, test_loader, scaler, dataset, save_as, p=20):
 
     return y_preds, y_tests
 
-def get_fnn_models(params_dict):
-    """Gets metrics and saves trained fnn model objects.
+# def get_fnn_models(dataset, params_dict):
+#     """Gets metrics and saves trained fnn model objects.
 
-    Args:
-        params_dict (dict): keys = model name
-                            values = params dictionary
-    Returns:
-        dict: dictionary where keys are model names and values are a list containing get_dataset functions and paths to pytorch model objects (state_dict) for loading. You can feed this directly into get_fnn_shap()
-    """
-    model_paths = {}
-    for model, params in params_dict.items():
-        dataset = params['dataset'](cuda=True)
-        X_test = dataset['test_input'].cpu().detach().numpy()
-        Y_test = dataset['test_output'].cpu().detach().numpy()
-        input_names = dataset['feature_labels']
-        output_names = dataset['output_labels']
-        save_as = f"{model.upper()}_{str(dt.date.today())}"
-        path = fit_fnn(params, plot=True, save_as=save_as)[1]
-        model_paths[model] = [params['dataset'], path]
-    return model_paths
+#     Args:
+#         params_dict (dict): keys = model name
+#                             values = params dictionary
+#     Returns:
+#         dict: dictionary where keys are model names and values are a list containing get_dataset functions and paths to pytorch model objects (state_dict) for loading. You can feed this directly into get_fnn_shap()
+#     """
+#     model_paths = {}
+#     for model, params in params_dict.items():
+#         X_test = dataset['test_input'].cpu().detach().numpy()
+#         Y_test = dataset['test_output'].cpu().detach().numpy()
+#         input_names = dataset['feature_labels']
+#         output_names = dataset['output_labels']
+#         save_as = f"{model.upper()}_{str(dt.date.today())}"
+#         path = fit_fnn(params, plot=True, save_as=save_as)[1]
+#         model_paths[model] = [params['dataset'], path]
+#     return model_paths
+
+def load_and_metrics(dataset, model_path, params):
+    X_train = dataset['train_input'].cpu().detach().numpy()
+    X_test = dataset['test_input'].cpu().detach().numpy()
+    input_names = dataset['feature_labels']
+    output_names = dataset['output_labels']
+
+    # feed model args
+    input_size = dataset['train_input'].shape[1]
+    hidden_nodes = params['hidden_nodes']
+    output_size = dataset['train_output'].shape[1]
+    model = FNN(input_size, hidden_nodes, output_size)
+    model.load_state_dict(torch.load(model_path, weights_only=True))
+    model.eval()
+
+    return 
 
 def get_fnn_shap(models_dict, params_dict, device):
     """Loads dataset and model and calculates kernel shap values. 
@@ -209,118 +223,107 @@ if __name__=="__main__":
     torch.set_default_dtype(torch.float64)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     pymaise_params = {
-        # 'chf': {
-        #     'hidden_nodes' : [231, 138, 267],
-        #     'num_epochs' : 200,
-        #     'batch_size' : 64,
-        #     'learning_rate' : 0.0009311391232267503,
-        #     'use_dropout': True,
-        #     'dropout_prob': 0.4995897609454529,
-        #     'dataset': get_chf
-        # },
-        # 'bwr': {
-        #     'hidden_nodes' : [511, 367, 563, 441, 162],
-        #     'num_epochs' : 200,
-        #     'batch_size' : 8,
-        #     'learning_rate' : 0.0009660778027367906,
-        #     'use_dropout': False,
-        #     'dropout_prob': 0,
-        #     'dataset': get_bwr
-        # },
-        'fp': {
+        'CHF': {
+            'hidden_nodes' : [231, 138, 267],
+            'num_epochs' : 200,
+            'batch_size' : 64,
+            'learning_rate' : 0.0009311391232267503,
+            'use_dropout': True,
+            'dropout_prob': 0.4995897609454529,
+        },
+        'BWR': {
+            'hidden_nodes' : [511, 367, 563, 441, 162],
+            'num_epochs' : 200,
+            'batch_size' : 8,
+            'learning_rate' : 0.0009660778027367906,
+            'use_dropout': False,
+            'dropout_prob': 0,
+        },
+        'FP': {
             'hidden_nodes' : [66, 400],
             'num_epochs' : 200,
             'batch_size' : 8,
             'learning_rate' : 0.001,
             'use_dropout': False,
             'dropout_prob': 0,
-            'dataset': get_fp
         },
-        # 'heat': {
-        #     'hidden_nodes' : [251, 184, 47],
-        #     'num_epochs' : 200,
-        #     'batch_size' : 8,
-        #     'learning_rate' : 0.0008821712781015931,
-        #     'use_dropout': False,
-        #     'dropout_prob': 0,
-        #     'dataset': get_heat
-        # },
-        'htgr': {
+        'HEAT': {
+            'hidden_nodes' : [251, 184, 47],
+            'num_epochs' : 200,
+            'batch_size' : 8,
+            'learning_rate' : 0.0008821712781015931,
+            'use_dropout': False,
+            'dropout_prob': 0,
+        },
+        'HTGR': {
             'hidden_nodes' : [199, 400],
             'num_epochs' : 200,
             'batch_size' : 8,
             'learning_rate' : 0.00011376283985074373,
             'use_dropout': True,
             'dropout_prob': 0.3225718287912892,
-            'dataset': get_htgr
         },
-        # 'mitr': {
-        #     'hidden_nodes' : [309],
-        #     'num_epochs' : 200,
-        #     'batch_size' : 8,
-        #     'learning_rate' : 0.0008321972582830564,
-        #     'use_dropout': False,
-        #     'dropout_prob': 0,
-        #     'dataset': partial(get_mitr, region='FULL')            
-        # },
-        # 'rea': {
-        #     'hidden_nodes' : [326, 127],
-        #     'num_epochs' : 200,
-        #     'batch_size' : 8,
-        #     'learning_rate' : 0.0009444837105276597,
-        #     'use_dropout': False,
-        #     'dropout_prob': 0,
-        #     'dataset': get_rea            
-        # },
-        'xs': {
+        'MITR': {
+            'hidden_nodes' : [309],
+            'num_epochs' : 200,
+            'batch_size' : 8,
+            'learning_rate' : 0.0008321972582830564,
+            'use_dropout': False,
+            'dropout_prob': 0,           
+        },
+        'REA': {
+            'hidden_nodes' : [326, 127],
+            'num_epochs' : 200,
+            'batch_size' : 8,
+            'learning_rate' : 0.0009444837105276597,
+            'use_dropout': False,
+            'dropout_prob': 0,         
+        },
+        'XS': {
             'hidden_nodes' : [95],
             'num_epochs' : 200,
             'batch_size' : 8,
             'learning_rate' : 0.0003421585453407753,
             'use_dropout': False,
-            'dropout_prob': 0,
-            'dataset': get_xs            
+            'dropout_prob': 0,        
         },
-        # 'mitr_a': {
-        #     'hidden_nodes' : [309],
-        #     'num_epochs' : 200,
-        #     'batch_size' : 8,
-        #     'learning_rate' : 0.0008321972582830564,
-        #     'use_dropout': False,
-        #     'dropout_prob': 0,
-        #     'dataset': partial(get_mitr, region='A')            
-        # },
-        # 'mitr_b': {
-        #     'hidden_nodes' : [309],
-        #     'num_epochs' : 200,
-        #     'batch_size' : 8,
-        #     'learning_rate' : 0.0008321972582830564,
-        #     'use_dropout': False,
-        #     'dropout_prob': 0,
-        #     'dataset': partial(get_mitr, region='B')            
-        # },
-        # 'mitr_c': {
-        #     'hidden_nodes' : [309],
-        #     'num_epochs' : 200,
-        #     'batch_size' : 8,
-        #     'learning_rate' : 0.0008321972582830564,
-        #     'use_dropout': False,
-        #     'dropout_prob': 0,
-        #     'dataset': partial(get_mitr, region='C')            
-        # },        
+        'MITR_A': {
+            'hidden_nodes' : [309],
+            'num_epochs' : 200,
+            'batch_size' : 8,
+            'learning_rate' : 0.0008321972582830564,
+            'use_dropout': False,
+            'dropout_prob': 0,        
+        },
+        'MITR_B': {
+            'hidden_nodes' : [309],
+            'num_epochs' : 200,
+            'batch_size' : 8,
+            'learning_rate' : 0.0008321972582830564,
+            'use_dropout': False,
+            'dropout_prob': 0,           
+        },
+        'MITR_C': {
+            'hidden_nodes' : [309],
+            'num_epochs' : 200,
+            'batch_size' : 8,
+            'learning_rate' : 0.0008321972582830564,
+            'use_dropout': False,
+            'dropout_prob': 0,        
+        },        
     }
     model_path_dict = {
-        # 'chf': [get_chf, 'models/CHF_2025-03-17.pt'],
-        # 'bwr': [get_bwr, 'models/BWR_2025-03-17.pt'], 
-        # 'fp': [get_fp, 'models/FP_2025-04-03.pt'], 
-        # 'heat': [get_heat, 'models/HEAT_2025-03-17.pt'], 
-        'htgr': [get_htgr, 'models/HTGR_2025-04-03.pt'], 
-        # 'mitr': [partial(get_mitr, region='FULL'), 'models/MITR_2025-03-17.pt'], 
-        # 'rea': [get_rea, 'models/REA_2025-03-17.pt'], 
-        'xs': [get_xs, 'models/XS_2025-04-03.pt'], 
-        # 'mitr_a': [partial(get_mitr, region='A'), 'models/MITR_A_2025-03-17.pt'], 
-        # 'mitr_b': [partial(get_mitr, region='B'), 'models/MITR_B_2025-03-17.pt'], 
-        # 'mitr_c': [partial(get_mitr, region='C'), 'models/MITR_C_2025-03-17.pt']
+        'CHF': 'models/CHF_2025-03-17.pt',
+        'BWR': 'models/BWR_2025-03-17.pt', 
+        'FP': 'models/FP_2025-04-03.pt', 
+        'HEAT': 'models/HEAT_2025-03-17.pt', 
+        'HTGR': 'models/HTGR_2025-04-03.pt', 
+        'MITR': 'models/MITR_2025-03-17.pt', 
+        'REA': 'models/REA_2025-03-17.pt', 
+        'XS': 'models/XS_2025-04-03.pt', 
+        'MITR_A': 'models/MITR_A_2025-03-17.pt', 
+        'MITR_B': 'models/MITR_B_2025-03-17.pt', 
+        'MITR_C': 'models/MITR_C_2025-03-17.pt'
     }
     shap_path_dict = {
         # 'chf': 'shap-values/CHF_fnn_2025-03-18.pkl', 
@@ -337,15 +340,24 @@ if __name__=="__main__":
         }
 
     # # STEP 1: train FNN models and get metrics
-    # get_fnn_models(pymaise_params)
+    for case, file, model_path, y_pred_file, y_test_file in zip(snakemake.params.d_list, snakemake.input.datasets, snakemake.output.model_path, snakemake.output.y_preds, snakemake.output.y_tests):
+        print(f'NOW RUNNING FNN FOR... {case}')
+        with open(file, 'rb') as f:
+            dataset = pickle.load(f)
+        model, y_preds, y_tests = fit_fnn(dataset, pymaise_params[case], save_as=f'{case}__{str(dt.date.today())}')
+        torch.save(model.state_dict(), model_path)
+        with open(y_pred_file, "wb") as file1:
+            pickle.dump(y_preds, file1)
+        with open(y_test_file, "wb") as file2:
+                pickle.dump(y_tests, file2)
 
     # # STEP 2: get shap values from FNN models, need model path dict from Step 1
     # shap_paths = get_fnn_shap(model_path_dict, pymaise_params, device)
     # print(shap_paths)
 
     # # STEP 3: plot shap values, need shap path dict from Step 2
-    for model, path in shap_path_dict.items():
-        plot_shap(path, save_as=f'{model}_fnn', type='fnn', width=0.05)
+    # for model, path in shap_path_dict.items():
+    #     plot_shap(path, save_as=f'{model}_fnn', type='fnn', width=0.05)
 
     # # STEP 4 (optional): print shap values and save to csv
     # for model, path in shap_path_dict.items():

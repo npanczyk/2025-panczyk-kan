@@ -1,6 +1,6 @@
 import datetime as dt
 # CASES = ['CHF', 'BWR', 'MITR_A', 'MITR_B', 'MITR_C', 'XS', 'FP', 'HEAT', 'REA', 'HTGR']
-CASES = ['BWR', 'MITR_A', 'MITR_B', 'MITR_C', 'XS', 'FP', 'HEAT', 'REA', 'HTGR']
+CASES = ['CHF', 'BWR', 'MITR_A', 'MITR_B', 'MITR_C', 'XS', 'FP', 'HEAT', 'REA', 'HTGR']
 # run_name = f'{case}_{str(dt.date.today())}'
 
 # rule targets:
@@ -56,3 +56,26 @@ rule kan:
         'run.py'
 
 
+rule fnn:
+    input:
+        datasets = expand("processed_datasets/{case}.pkl", case=CASES),
+    params:
+        d_list = CASES,
+    output:
+        model_path = expand('models/{case}'+f'__{str(dt.date.today())}.pt', case=CASES),
+        y_preds = expand('results/Ys/{case}/y_pred_FNN.pkl', case=CASES),
+        y_tests = expand('results/Ys/{case}/y_test_FNN.pkl', case=CASES),
+    script:
+        'fnn.py'
+
+rule get_fnn_plots:
+    input:
+        y_preds = expand('results/Ys/{case}/y_pred_FNN.pkl', case=CASES),
+        y_tests = expand('results/Ys/{case}/y_test_FNN.pkl', case=CASES),
+        datasets = expand("processed_datasets/{case}.pkl", case=CASES),
+    params:
+        d_list = CASES,
+    output:
+        plots = expand('figures/pred-v-true/{case}'+f'_FNN_{str(dt.date.today())}.png', case=CASES)
+    script:
+        'plotting.py'
