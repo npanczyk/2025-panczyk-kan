@@ -5,6 +5,7 @@ import torch
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 torch.set_default_dtype(torch.float64)
 import os
+from scipy.stats import pearsonr, ttest_ind
 
 def rmspe(ytest, ypred):
     """Generates root mean square percentage error.
@@ -106,7 +107,8 @@ def metrics(output_labels, y_test, y_pred, p):
             'MSE':[],
             'RMSE':[],
             'RMSPE':[],
-            'R2':[]
+            'R2':[],
+            'PCC':[],
         }
     for i in range(len(output_labels)):
         # get metrics for each output
@@ -118,7 +120,25 @@ def metrics(output_labels, y_test, y_pred, p):
         metrics['RMSE'].append(round(np.sqrt(mean_squared_error(yi_test, yi_pred)), p))
         metrics['RMSPE'].append(round(rmspe(yi_test, yi_pred), p))
         metrics['R2'].append(round(r2_score(yi_test, yi_pred),p))
+        metrics['PCC'].append(round(pearsonr(yi_test, yi_pred).statistic, p))
     return pd.DataFrame.from_dict(metrics)
+
+def ind_ttest(output_labels, y_test, y_pred_KAN, y_pred_FNN):
+    scores = {
+            'OUTPUT':output_labels,
+            'AE_KAN':{},
+            'AE_FNN':{}
+    }
+    for i in range(len(output_labels)):
+        # get metrics for each output
+        yi_test = y_test[:,i]
+        yi_pred_KAN = y_pred_KAN[:,i]
+        yi_pred_FNN = y_pred_FNN[:,i]
+        for j in len(yi_test):
+            scores['AE_KAN'][output_labels[i]].append(abs(yi_test-yi_pred_KAN))
+            scores['AE_FNN'][output_labels[i]].append(abs(yi_test-yi_pred_FNN))
+    print(scores)
+    return
 
 def print_shap(path, save_as, type):
     df = pd.read_pickle(path)

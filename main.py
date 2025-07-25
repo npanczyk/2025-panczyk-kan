@@ -195,7 +195,7 @@ class NKAN():
         if not os.path.exists('results'):
             os.makedirs('results')
         metrics_df.to_csv(f'results/{save_as}_symetrics.csv', index=False)
-        return expressions
+        return expressions, y_pred, y_test
 
     def get_importances(self, model, save_as):
         """Uses pykan built-in feature importance functionality to rank features from a given model and plot their importances. 

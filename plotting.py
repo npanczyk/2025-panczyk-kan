@@ -33,6 +33,12 @@ def plot_overfitting(n_params, train_rmse, test_rmse, cont_train_rmse, cont_test
     fig.savefig(f'figures/{save_as}.png', dpi=300)
     return fig
 
-if __name__=="__main__":
-    fig = plot_feature_importances([0.4, 0.3, 0.1], ['red', 'orange', 'yellow'])
-    fig.savefig('test.png', dpi=300)
+def plot_pred_v_true(y_preds, y_tests, save_as, output, color='magenta'):
+    fig, ax = plt.subplots()
+    ax.scatter(y_preds, y_tests, color=color)
+    ax.plot(y_tests, y_tests, color='black', label=f'Hypothetical Perfect Prediction for {output}')
+    ax.legend()
+    ax.set_xlabel("Predicted")
+    ax.set_ylabel("Actual")
+    fig.savefig(f'figures/pred-v-true/{save_as}.png', dpi=300)
+
