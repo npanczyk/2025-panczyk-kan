@@ -8,7 +8,7 @@ import pickle
 from functools import partial
 
 
-def get_chf(synthetic=False, cuda=False):
+def get_chf(synthetic=False, shuffle=False, cuda=False):
     """
     Gets data for CHF prediction.
 
@@ -38,10 +38,17 @@ def get_chf(synthetic=False, cuda=False):
         device = 'cuda'
     else:
         device = 'cpu'
-    x_train = train_df.iloc[:, [0, 1, 2, 3, 4, 5]].values  # Input columns (1-6) D, L, P, G, T, Xe
-    y_train = train_df.iloc[:, [6]].values  # CHF
-    x_test = test_df.iloc[:, [0, 1, 2, 3, 4, 5]].values  
-    y_test = test_df.iloc[:, [6]].values
+    if shuffle==False:
+        x_train = train_df.iloc[:, [0, 1, 2, 3, 4, 5]].values  # Input columns (1-6) D, L, P, G, T, Xe
+        y_train = train_df.iloc[:, [6]].values  # CHF
+        x_test = test_df.iloc[:, [0, 1, 2, 3, 4, 5]].values  
+        y_test = test_df.iloc[:, [6]].values
+    else:
+        df = pd.concat([train_df, test_df])
+        features_df = df.iloc[:, [0, 1, 2, 3, 4, 5]].values
+        outputs_df = df.iloc[:, [6]]
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, shuffle=True)
 
     # Define the Min-Max Scaler
     scaler_X = MinMaxScaler()
@@ -70,7 +77,7 @@ def get_chf(synthetic=False, cuda=False):
     return dataset
 
 
-def get_mitr(test_split=0.3, random_state=42, cuda=False, region='FULL'):
+def get_mitr(test_split=0.3, shuffle=False, random_state=42, cuda=False, region='FULL'):
     """Gets MIT microreactor data. Six features (six control blade hights) and 22 outputs (power produced by each fuel element in the core).
 
     Args:
@@ -93,8 +100,12 @@ def get_mitr(test_split=0.3, random_state=42, cuda=False, region='FULL'):
 
     features_df = pd.read_csv('datasets/crx.csv')
     outputs_df = pd.read_csv('datasets/powery.csv', usecols=output_cols)
-    x_train, x_test, y_train, y_test = train_test_split(
-    features_df, outputs_df, test_size=0.3, random_state=random_state)
+    if shuffle==False:
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, random_state=random_state)
+    else:
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, shuffle=True)
 
     if cuda:
         device = 'cuda'
@@ -128,7 +139,7 @@ def get_mitr(test_split=0.3, random_state=42, cuda=False, region='FULL'):
     return dataset
 
 
-def get_xs(test_split=0.3, random_state=42, cuda=False):
+def get_xs(test_split=0.3, shuffle=False, random_state=42, cuda=False):
     """Gets reactor physics data ready for KAN.
     Features (cross sections): 
     - ``FissionFast``: fast fission,
@@ -151,8 +162,12 @@ def get_xs(test_split=0.3, random_state=42, cuda=False):
     """
     features_df = pd.read_csv('datasets/xs.csv').iloc[:,[0,1,2,3,4,5,6,7]]
     outputs_df = pd.read_csv('datasets/xs.csv').iloc[:, [8]]
-    x_train, x_test, y_train, y_test = train_test_split(
-    features_df, outputs_df, test_size=0.3, random_state=random_state)
+    if shuffle==False:
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, random_state=random_state)
+    else:
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, shuffle=True)
 
     # Define the Min-Max Scaler
     scaler_X = MinMaxScaler()
@@ -185,7 +200,7 @@ def get_xs(test_split=0.3, random_state=42, cuda=False):
     }
     return dataset
 
-def get_fp(test_split=0.3, random_state=42, cuda=False):
+def get_fp(test_split=0.3, shuffle=False, random_state=42, cuda=False):
     """
     Gets fuel performance data ready for KAN.
 
@@ -221,8 +236,12 @@ def get_fp(test_split=0.3, random_state=42, cuda=False):
     """
     features_df = pd.read_csv('datasets/fp_inp.csv')
     outputs_df = pd.read_csv('datasets/fp_out.csv')
-    x_train, x_test, y_train, y_test = train_test_split(
-    features_df, outputs_df, test_size=0.3, random_state=42)
+    if shuffle==False:
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, random_state=42)
+    else:
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, shuffle=True)
 
     if cuda:
         device = 'cuda'
@@ -255,7 +274,7 @@ def get_fp(test_split=0.3, random_state=42, cuda=False):
     }
     return dataset
 
-def get_heat(test_split=0.3, random_state=42, cuda=False):
+def get_heat(test_split=0.3, shuffle=False, random_state=42, cuda=False):
     """Gets heat conduction data:
     Features:
      - ``qprime``: linear heat generation rate :math:`[W/m]`,
@@ -277,8 +296,12 @@ def get_heat(test_split=0.3, random_state=42, cuda=False):
     """
     features_df = pd.read_csv('datasets/heat.csv').iloc[:,[0,1,2,3,4,5,6]]
     outputs_df = pd.read_csv('datasets/heat.csv').iloc[:, [7]]
-    x_train, x_test, y_train, y_test = train_test_split(
-    features_df, outputs_df, test_size=0.3, random_state=random_state)
+    if shuffle==False:
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, random_state=random_state)
+    else:
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, shuffle=True)
     if cuda:
         device = 'cuda'
     else:
@@ -310,7 +333,7 @@ def get_heat(test_split=0.3, random_state=42, cuda=False):
     }
     return dataset
 
-def get_rea(test_split=0.3, random_state=42, cuda=False):
+def get_rea(test_split=0.3, shuffle=False, random_state=42, cuda=False):
     """Gets rod ejection accident (REA) data.
 
     Features:
@@ -334,8 +357,12 @@ def get_rea(test_split=0.3, random_state=42, cuda=False):
     """
     features_df = pd.read_csv('datasets/rea_inputs.csv')
     outputs_df = pd.read_csv('datasets/rea_outputs.csv')
-    x_train, x_test, y_train, y_test = train_test_split(
-    features_df, outputs_df, test_size=0.3, random_state=random_state)
+    if shuffle==False:
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, random_state=random_state)
+    else:
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, shuffle=True)
 
     if cuda:
         device = 'cuda'
@@ -368,7 +395,7 @@ def get_rea(test_split=0.3, random_state=42, cuda=False):
     }
     return dataset
 
-def get_bwr(test_split=0.3, random_state=42, cuda=False):
+def get_bwr(test_split=0.3, shuffle=False, random_state=42, cuda=False):
     """Gets BWR data.
 
     Features:
@@ -408,8 +435,12 @@ def get_bwr(test_split=0.3, random_state=42, cuda=False):
     """
     features_df = pd.read_csv('datasets/bwr_input.csv')
     outputs_df = pd.read_csv('datasets/bwr_output.csv')
-    x_train, x_test, y_train, y_test = train_test_split(
-    features_df, outputs_df, test_size=0.3, random_state=random_state)
+    if shuffle==False:
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, random_state=random_state)
+    else:
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, shuffle=True)
 
     if cuda:
         device = 'cuda'
@@ -442,7 +473,8 @@ def get_bwr(test_split=0.3, random_state=42, cuda=False):
     }
     return dataset
 
-def get_htgr(random_state=42, cuda=False, quadrant=None):
+def get_htgr(shuffle=False, random_state=42, cuda=False, quadrant=None):
+    # these files have a 70-30 train test split
     train_df = pd.read_csv('datasets/htgr_train.csv')
     test_df = pd.read_csv('datasets/htgr_valid.csv')
     if cuda:
@@ -453,10 +485,19 @@ def get_htgr(random_state=42, cuda=False, quadrant=None):
         flux_cols = ['fluxQ1','fluxQ2','fluxQ3','fluxQ4']
     else:
         flux_cols = [f'fluxQ{quadrant}']
-    x_train = train_df.loc[:,['theta1','theta2','theta3','theta4','theta5','theta6','theta7','theta8']].values
-    y_train = train_df.loc[:,flux_cols].values  # CHF
-    x_test = test_df.loc[:,['theta1','theta2','theta3','theta4','theta5','theta6','theta7','theta8']].values  
-    y_test = test_df.loc[:,flux_cols].values
+
+    if shuffle==True:
+        df = pd.concat([train_df, test_df])
+        features_df = df.loc[:,['theta1','theta2','theta3','theta4','theta5','theta6','theta7','theta8']].values
+        outputs_df = df.loc[:,flux_cols].values
+        x_train, x_test, y_train, y_test = train_test_split(
+        features_df, outputs_df, test_size=0.3, shuffle=True)
+    
+    else:
+        x_train = train_df.loc[:,['theta1','theta2','theta3','theta4','theta5','theta6','theta7','theta8']].values
+        y_train = train_df.loc[:,flux_cols].values 
+        x_test = test_df.loc[:,['theta1','theta2','theta3','theta4','theta5','theta6','theta7','theta8']].values  
+        y_test = test_df.loc[:,flux_cols].values
 
     # Define the Min-Max Scaler
     scaler_X = MinMaxScaler()

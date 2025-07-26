@@ -79,3 +79,15 @@ rule get_fnn_plots:
         plots = expand('figures/pred-v-true/{case}'+f'_FNN_{str(dt.date.today())}.png', case=CASES)
     script:
         'plotting.py'
+
+rule get_wilcoxon_scores:
+    # dummy input file
+    input:
+        file = 'datasets/chf_train.csv', 
+    params:
+        d_list = CASES,
+        trials = 1,
+    output:
+        wilcoxon_scores = 'results/stats/wilcoxon_scores.pkl'
+    script:
+        'stats.py'
