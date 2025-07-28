@@ -14,6 +14,7 @@ def get_scores(cases, kan_hyperparams, fnn_hyperparams, preprocess, trials=30):
         for test in range(30):
             # preprocess dataset
             dataset = preprocess[case](shuffle=True)
+
             # fit a kan with best hyperparams and training set
 
             # predict test set results with kan
