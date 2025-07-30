@@ -16,4 +16,6 @@ dependencies:
   - hyperopt
   - xarray
   - shap
-prefix: /home/npanczyk/miniconda3/envs/pykan-env
+  - snakemake-minimal
+  - graphviz
+
