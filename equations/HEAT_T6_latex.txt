@@ -1,0 +1,1 @@
+T = 0.1084 \left(\tanh{\left(10.0 \mathit{qprime} - 5.096 \right)} + 0.9902\right)^{2} + 66.7427 - \frac{66.9833}{\left(- 0.0003 \left(1 - 0.6088 \mathit{L}\right)^{2} + 0.0014 \left(\mathit{qprime} - 0.18\right)^{\frac{3}{2}} + 0.0009 \left(\mathit{k} + 0.78\right)^{\frac{3}{2}} + 1\right)^{4}}

@@ -1,0 +1,1 @@
+k = 10.0466 \left(1 + \frac{0.4398}{\left(- 0.0204 \left(1 - 0.0201 \mathit{capture_fast}\right)^{5} + 0.0379 \left(1 - 0.02 \mathit{fission_thermal}\right)^{3} - 0.0163 \left(1 - 0.02 \mathit{capture_thermal}\right)^{3} - 0.0132 \left(- 0.02 \mathit{fission_fast} - 1\right)^{4} + 0.0001 \left|{9.4 \mathit{scatter_12} - 10.0}\right| + 1\right)^{5}}\right)^{4} - 45.8887

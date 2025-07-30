@@ -1,0 +1,1 @@
+k = 6.664 - 6.6475 \cos{\left(0.0077 \tan{\left(0.0416 \left(1 - 0.0249 \mathit{capture_fast}\right)^{4} - 0.0583 \left(1 - 0.02 \mathit{fission_thermal}\right)^{4} + 0.0258 \left(1 - 0.02 \mathit{capture_thermal}\right)^{4} + 0.027 \left(- 0.02 \mathit{fission_fast} - 1\right)^{4} + 0.035 \left(- 0.02 \mathit{scatter_12} - 1\right)^{4} + 1.5093 \right)} - 5.2186 \right)}

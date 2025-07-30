@@ -1,0 +1,4 @@
+fission_gas = 2247.9218 - 139.7345 \tan{\left(0.474 \tan{\left(2.668 \mathit{thickness_gap} + 1.5708 \right)} - 7.8048 \right)}
+max_fuel_cl_T = -9441.065 - \frac{69.5994}{\left(\tan{\left(2.668 \mathit{thickness_gap} + 1.5708 \right)} + 0.4316\right)^{5}}
+max_fuel_surf_T = 7318.0431 - \frac{23.1104}{\left(\tan{\left(2.668 \mathit{thickness_gap} + 1.5708 \right)} + 0.4082\right)^{5}}
+radial_clad_T = 813.7057 - \frac{30.4695}{\left(\tan{\left(2.668 \mathit{thickness_gap} + 1.5708 \right)} + 0.429\right)^{5}}

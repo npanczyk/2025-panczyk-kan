@@ -1,0 +1,1 @@
+T = 15.3775 \left(0.0006 \left(\mathit{L} + 0.46\right)^{\frac{3}{2}} + 0.0023 \sin{\left(2.4494 \mathit{k} + 4.9762 \right)} + 0.002 \tan{\left(2.6225 \mathit{qprime} + 7.9885 \right)} - 1\right)^{5} + 15.4581 + 0.3629 e^{- 1.2766 \left(- 0.806 \operatorname{sign}{\left(4.508 - 8.4 \mathit{qprime} \right)} - 1\right)^{2}}

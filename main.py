@@ -162,7 +162,7 @@ class NKAN():
         sym_file = open(f"equations/{save_as}.txt", "w")
         tex_file = open(f"equations/{save_as}_latex.txt", "w")
         variable_map = get_variable_map(self.dataset['feature_labels'])
-        print(variable_map)
+        # print(variable_map)
         for i, output in enumerate(self.dataset['output_labels']):
             formula = model.symbolic_formula()[0][i]
             # round all the coefficients

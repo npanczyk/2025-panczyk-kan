@@ -72,17 +72,22 @@ def y_pred_sym(expressions, num_vars, X_test, scaler, device):
         numpy array: An unscaled prediction for each X test value.
     """
     Y_preds = np.zeros((X_test.shape[0], len(expressions)))
+    # print(f'Y_preds: {Y_preds}')
+
     for i, expression in enumerate(expressions):
         # set up symbolic variables to match autosymbolic()
         variables = symbols(f'x_1:{num_vars + 1}')
-        
+        print(f'EXPRESSION: {expression}')
+
         # convert expression using lambdify so vector ops can be used
         numerical_function = lambdify(variables, expression, 'numpy')
         
         # make sure X_test is pushed to cpu and converted to numpy
+        # print(f'X_test: {X_test}')
         if isinstance(X_test, torch.Tensor):
             X_test = X_test.detach().cpu().numpy() 
         Y_pred_sym = numerical_function(*X_test.T)
+        # print(f'Y_pred_sym: {Y_pred_sym}')
         Y_preds[:, i] = Y_pred_sym.flatten()
 
     y_pred_sym = scaler.inverse_transform(Y_preds)

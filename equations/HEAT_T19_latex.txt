@@ -1,0 +1,1 @@
+T = 156.3113 - 0.4398 e^{- 0.3475 \left(0.9254 - \operatorname{sign}{\left(3.108 - 5.8 \mathit{qprime} \right)}\right)^{2}} - \frac{156.7763}{\left(0.0004 \left(- 0.06 \mathit{L} - 1\right)^{4} + 0.0005 \left(\mathit{k} + 0.38\right)^{\frac{3}{2}} + 0.0005 e^{1.0 \mathit{qprime}} + 1\right)^{4}}

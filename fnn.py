@@ -34,7 +34,7 @@ class FNN(nn.Module):
     def forward(self, x):
         return self.model(x)
 
-def fit_fnn(dataset, params, plot=False, save_as=None):
+def fit_fnn(dataset, params, device, plot=False, save_as=None):
     # define hyperparams
     input_size = dataset['train_input'].shape[1]
     print(f'Input Size: {input_size}')
@@ -87,10 +87,10 @@ def fit_fnn(dataset, params, plot=False, save_as=None):
     path = f'models/{save_as}.pt'
     # torch.save(model.state_dict(), path)
     # evaluate model performance
-    y_preds, y_tests = get_metrics(model, test_loader, dataset['y_scaler'], dataset, save_as=save_as)
+    y_preds, y_tests = get_metrics(model, test_loader, dataset['y_scaler'], dataset, save_as=save_as, device=device)
     return model.cpu(), y_preds, y_tests
 
-def get_metrics(model, test_loader, scaler, dataset, save_as, p=20):
+def get_metrics(model, test_loader, scaler, dataset, save_as, device, p=20):
     """This function generates metrics on the original model training call, not with a loaded model.
 
     Args:
@@ -344,7 +344,7 @@ if __name__=="__main__":
         print(f'NOW RUNNING FNN FOR... {case}')
         with open(file, 'rb') as f:
             dataset = pickle.load(f)
-        model, y_preds, y_tests = fit_fnn(dataset, pymaise_params[case], save_as=f'{case}__{str(dt.date.today())}')
+        model, y_preds, y_tests = fit_fnn(dataset, pymaise_params[case], device=device, save_as=f'{case}__{str(dt.date.today())}')
         torch.save(model.state_dict(), model_path)
         with open(y_pred_file, "wb") as file1:
             pickle.dump(y_preds, file1)

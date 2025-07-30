@@ -1,6 +1,8 @@
 import datetime as dt
-# CASES = ['CHF', 'BWR', 'MITR_A', 'MITR_B', 'MITR_C', 'XS', 'FP', 'HEAT', 'REA', 'HTGR']
-CASES = ['CHF', 'BWR', 'MITR_A', 'MITR_B', 'MITR_C', 'XS', 'FP', 'HEAT', 'REA', 'HTGR']
+# CASES = ['FP']
+CASES = ['FP', 'CHF', 'BWR', 'MITR_A', 'MITR_B', 'MITR_C', 'XS', 'HEAT', 'REA', 'HTGR']
+# CASES = ['REA', 'HTGR']
+case_list = ''.join(CASES)
 # run_name = f'{case}_{str(dt.date.today())}'
 
 # rule targets:
@@ -80,14 +82,31 @@ rule get_fnn_plots:
     script:
         'plotting.py'
 
-rule get_wilcoxon_scores:
+rule get_stats_scores:
     # dummy input file
     input:
-        file = 'datasets/chf_train.csv', 
+        static_paths = expand("processed_datasets/{case}.pkl", case=CASES), 
     params:
         d_list = CASES,
-        trials = 1,
+        trials = 30,
+        gpu = "2",
     output:
-        wilcoxon_scores = 'results/stats/wilcoxon_scores.pkl'
+        kan_scores = f'results/stats/{case_list}/kan_scores.pkl',
+        kan_sym_scores = f'results/stats/{case_list}/kan_symbolic_scores.pkl',
+        fnn_scores = f'results/stats/{case_list}/fnn_scores.pkl',
     script:
         'stats.py'
+
+rule wilcoxon:
+    input:
+        kan_scores = f'results/stats/{case_list}/kan_scores.pkl',
+        kan_sym_scores = f'results/stats/{case_list}/kan_symbolic_scores.pkl',
+        fnn_scores = f'results/stats/{case_list}/fnn_scores.pkl',
+    params:
+        alpha = 0.05,
+        metric = 'MAE',
+    output:
+        kan_wilcoxon = f'results/stats/kan_wilcoxon_MAE.tex',
+        kan_sym_wilcoxon = f'results/stats/kan_sym_wilcoxon_MAE.tex',
+    script:
+        'wilcoxon.py'

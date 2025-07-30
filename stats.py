@@ -5,78 +5,92 @@ from functools import partial
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from main import *
 from fnn import *
-
+import shutil
 
 def get_scores(cases, kan_hyperparams, fnn_hyperparams, preprocess, device, trials=30):
     # set up data structure to store values
     kan = {}
     kan_sym = {}
     fnn = {}
-    # loop through each dataset 30 times
     for case in cases:
         kan[case] = {}
         kan_sym[case] = {}
         fnn[case] = {}
-        for trial in range(trials):
-            # preprocess dataset
-            dataset = preprocess[case](shuffle=True, cuda=True)
-
-            # fit a kan with best hyperparams and training set
-            nkan = NKAN(dataset, 42, device, kan_hyperparams[case])
-            kan_model = nkan.get_model()
-    
-            # predict test set results with kan
-            X_test = dataset['test_input']
-            Y_pred_kan = kan_model(X_test)
-            print('KAN RESULTS PREDICTED.')
-
-            # predict test set results with symbolic kan ALREADY UNSCALED
-            expr, y_pred_kan_sym, y_test = nkan.get_equation(
-                model = kan_model, 
-                save_as = f'{case}_T{trial}', 
-                simple=0, 
-                lib=None)
-            print('SYMBOLIC KAN RESULTS PREDICTED.')
-            
-            # fit an fnn with best hyperparams and training set ALREADY UNSCALED
-            fnn_model, y_pred_fnn = fit_fnn(dataset, fnn_hyperparams[case], device, save_as=f'{case}__T{trial}')[0:2]
-            print('FNN RESULTS PREDICTED.')
+        dummy_dataset = preprocess[case](shuffle=True, cuda=True)
+        outputs = dummy_dataset['output_labels']
+        for output in outputs:
+            kan[case][output] = {'MAE': [], 'R2': []}
+            kan_sym[case][output] = {'MAE': [], 'R2': []}
+            fnn[case][output] = {'MAE': [], 'R2': []}
 
 
-            # get true test set results and grab y_scaler object
-            Y_test = dataset['test_output'] # still scaled
-            scaler = dataset['y_scaler']
+    # loop through each dataset 30 times
+    for case in cases:
+        print(f'NOW STARTING: {case}')
+        trial = 0
+        while trial < trials:
+            try:
+                print(f'TRIAL #: {trial}')
+                if os.path.exists('model'):
+                    shutil.rmtree("model")
+                # preprocess dataset
+                dataset = preprocess[case](shuffle=True, cuda=True)
 
-            # unscale everything
-            if str(device) == "cuda": 
-                y_pred_kan = scaler.inverse_transform(Y_pred_kan.cpu().detach().numpy()) 
+                # fit a kan with best hyperparams and training set
+                nkan = NKAN(dataset, 42, device, kan_hyperparams[case])
+                kan_model = nkan.get_model()
+        
+                # predict test set results with kan
+                X_test = dataset['test_input']
+                Y_pred_kan = kan_model(X_test)
+                print('KAN RESULTS PREDICTED.')
 
-            else:
-                y_pred_kan = scaler.inverse_transform(Y_pred_kan.detach().numpy()) 
-            
-            outputs = dataset['output_labels']
-            for i, output in enumerate(outputs):
-                yi_test = y_test[:,i]
-                yi_pred_kan = y_pred_kan[:,i]
-                yi_pred_kan_sym = y_pred_kan_sym[:,i]
-                yi_pred_fnn = y_pred_fnn[:,i]
+                # predict test set results with symbolic kan ALREADY UNSCALED
+                expr, y_pred_kan_sym, y_test = nkan.get_equation(
+                    model = kan_model, 
+                    save_as = f'{case}_T{trial}', 
+                    simple=0, 
+                    lib=None)
+                print('SYMBOLIC KAN RESULTS PREDICTED.')
+                
+                # fit an fnn with best hyperparams and training set ALREADY UNSCALED
+                fnn_model, y_pred_fnn = fit_fnn(dataset, fnn_hyperparams[case], device, save_as=f'{case}__T{trial}')[0:2]
+                print('FNN RESULTS PREDICTED.')
 
-                kan[case][output] = {'MAE': [], 'R2': []}
-                kan_sym[case][output] = {'MAE': [], 'R2': []}
-                fnn[case][output] = {'MAE': [], 'R2': []}
 
-                # get mae for kan 
-                kan[case][output]['MAE'].append(mean_absolute_error(yi_test, yi_pred_kan))
-                # get mae for kan symbolic
-                kan_sym[case][output]['MAE'].append(mean_absolute_error(yi_test, yi_pred_kan_sym))
-                # get mae for fnn
-                fnn[case][output]['MAE'].append(mean_absolute_error(yi_test, yi_pred_fnn))
-                # get r2 for kan
-                kan[case][output]['R2'].append(r2_score(yi_test, yi_pred_kan) )
-                # get r2 for kan
-                kan_sym[case][output]['R2'].append(r2_score(yi_test, yi_pred_kan_sym) )
-                # get r2 for fnn
-                fnn[case][output]['R2'].append(r2_score(yi_test, yi_pred_fnn) )
+                # get true test set results and grab y_scaler object
+                Y_test = dataset['test_output'] # still scaled
+                scaler = dataset['y_scaler']
+
+                # unscale everything
+                if str(device) == "cuda": 
+                    y_pred_kan = scaler.inverse_transform(Y_pred_kan.cpu().detach().numpy()) 
+
+                else:
+                    y_pred_kan = scaler.inverse_transform(Y_pred_kan.detach().numpy()) 
+                
+                outputs = dataset['output_labels']
+                for i, output in enumerate(outputs):
+                    yi_test = y_test[:,i]
+                    yi_pred_kan = y_pred_kan[:,i]
+                    yi_pred_kan_sym = y_pred_kan_sym[:,i]
+                    yi_pred_fnn = y_pred_fnn[:,i]
+
+                    # get mae for kan 
+                    kan[case][output]['MAE'].append(mean_absolute_error(yi_test, yi_pred_kan))
+                    # get mae for kan symbolic
+                    kan_sym[case][output]['MAE'].append(mean_absolute_error(yi_test, yi_pred_kan_sym))
+                    # get mae for fnn
+                    fnn[case][output]['MAE'].append(mean_absolute_error(yi_test, yi_pred_fnn))
+                    # get r2 for kan
+                    kan[case][output]['R2'].append(r2_score(yi_test, yi_pred_kan) )
+                    # get r2 for kan
+                    kan_sym[case][output]['R2'].append(r2_score(yi_test, yi_pred_kan_sym) )
+                    # get r2 for fnn
+                    fnn[case][output]['R2'].append(r2_score(yi_test, yi_pred_fnn) )
+                trial += 1
+            except:
+                print(f'TRIAL {trial} FAILED FOR CASE {case}... RETRYING NOW')
 
     return kan, kan_sym, fnn
 
@@ -87,6 +101,7 @@ def get_wilcoxon(kan_dict, kan_sym_dict, fnn_dict, save_as):
     return
 
 if __name__ == "__main__":
+    os.environ["CUDA_VISIBLE_DEVICES"]=snakemake.params.gpu
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     cases = snakemake.params.d_list
     preprocessing_funcs = {
