@@ -11,14 +11,24 @@ def get_wilcoxon(scores1, scores2, metric, alpha, path):
             statistic, p_value = wilcoxon(scores1[case][output][metric], scores2[case][output][metric], alternative='two-sided')
             print(statistic, p_value)
 
-            # NEED MAJDI TO CHECK THIS LOGIC!!!!
-            if p_value < alpha and statistic > 0:
-                results[case].append('+')
-                print('+')
-            elif p_value < alpha and statistic < 0:
-                results[case].append('-')
-                print('-')
-            else:
+            # check if a significant difference is found
+            if p_value < alpha:
+                avg1 = np.mean(scores1[case][output][metric])
+                avg2 = np.mean(scores2[case][output][metric])
+                # if scores1 is better than scores2, yield positive
+                if metric == 'R2' and avg1 > avg2:
+                    results[case].append('+')
+                    print('+')
+                elif metric == 'R2' and avg1 < avg2: # FNN is better
+                    results[case].append('-')
+                    print('-')
+                elif metric == 'MAE' and avg1 < avg2: # reverse the order for error
+                    results[case].append('+')
+                    print('+')
+                elif metric == 'MAE' and avg1 > avg2:
+                    results[case].append('-')
+                    print('-')
+            else: # no difference between methods
                 results[case].append('0')
 
     for case, vals in results.items():
