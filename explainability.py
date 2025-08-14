@@ -140,9 +140,9 @@ def plot_shap(path, save_as, type='kan', width=0.2):
     n = len(output_names)
     ax.grid(True, which='both', axis='y', linestyle='--', color='gray', alpha=0.5)
     ax.set_xticks(x_positions + (n-1)*width/2)
-    ax.set_xticklabels(input_names, rotation=50)
+    ax.set_xticklabels(input_names, rotation=90)
     plt.subplots_adjust(bottom=0.27, left=0.15)
-    #plt.tight_layout()
+    plt.tight_layout()
     if not os.path.exists('figures/shap'):
         os.makedirs('figures/shap')
     plt.savefig(f'figures/shap/{save_as}.png', dpi=300)
@@ -203,13 +203,13 @@ if __name__=="__main__":
     }
 
     shap_path_dict = {
-        # 'fp': 'shap-values/FP_kan_2025-04-03.pkl', 
+        'fp': 'shap-values/FP_kan_2025-04-03.pkl', 
         # 'bwr': 'shap-values/BWR_kan_2025-03-18.pkl', 
         # 'heat': 'shap-values/HEAT_kan_2025-03-18.pkl', 
         # 'htgr': 'shap-values/HTGR_kan_2025-04-03.pkl', 
         # 'mitr_a': 'shap-values/MITR_A_kan_2025-03-18.pkl', 
         # 'mitr_b': 'shap-values/MITR_B_kan_2025-03-18.pkl', 
-        'mitr_c': 'shap-values/MITR_C_kan_2025-03-18.pkl', 
+        # 'mitr_c': 'shap-values/MITR_C_kan_2025-03-18.pkl', 
         # 'mitr': 'shap-values/MITR_kan_2025-03-18.pkl', 
         # 'chf': 'shap-values/CHF_kan_2025-03-18.pkl', 
         # 'rea': 'shap-values/REA_kan_2025-03-18.pkl', 
@@ -222,7 +222,7 @@ if __name__=="__main__":
 
     # uncomment to make shap kan plots
     for model, path in shap_path_dict.items():
-        plot_shap(path, save_as=f'{model}_kan', type='kan', width=0.05)
+        plot_shap(path, save_as=f'{model}_kan', type='kan', width=0.2)
 
     ## uncomment to print shap values
     # for model, path in shap_path_dict.items():

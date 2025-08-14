@@ -10,13 +10,6 @@ case_list = ''.join(CASES)
 #         fig_file = "figures.log",
 #         miter_full = f'{path}{run_name}_params.txt'
 
-# rule preprocess:
-#     input:
-#         file = 'datasets/chf_train.csv',
-#     output:
-#         dataset = f'processed_datasets/{case}.pkl',
-#     script:
-#         'preprocessing.py'
 
 rule preprocess:
     input:
@@ -42,9 +35,6 @@ rule preprocess:
 #         results = f"hyperparameters/{run_name}/{run_name}_results.txt",
 #     script:
 #         'hypertuning.py'
-
-# rule hypertune_fnn:
-#     input:
 
 rule kan:
     input:
@@ -104,9 +94,9 @@ rule wilcoxon:
         fnn_scores = f'results/stats/{case_list}/fnn_scores.pkl',
     params:
         alpha = 0.05,
-        metric = 'MAE',
+        metric = 'R2',
     output:
-        kan_wilcoxon = f'results/stats/kan_wilcoxon_MAE.tex',
-        kan_sym_wilcoxon = f'results/stats/kan_sym_wilcoxon_MAE.tex',
+        kan_wilcoxon = f'results/stats/kan_wilcoxon_R2.tex',
+        kan_sym_wilcoxon = f'results/stats/kan_sym_wilcoxon_R2.tex',
     script:
         'wilcoxon.py'
