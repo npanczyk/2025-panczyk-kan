@@ -1,1 +1,0 @@
-k = 7.2107 \left(0.0097 \tan{\left(0.0603 \left(1 - 0.0248 \mathit{capture_fast}\right)^{4} - 0.0837 \left(1 - 0.02 \mathit{fission_thermal}\right)^{4} + 0.037 \left(1 - 0.02 \mathit{capture_thermal}\right)^{4} + 0.0388 \left(- 0.02 \mathit{fission_fast} - 1\right)^{4} + 0.0505 \left(- 0.02 \mathit{scatter_12} - 1\right)^{4} - 7.9347 \right)} + 1\right)^{4} - 0.4667

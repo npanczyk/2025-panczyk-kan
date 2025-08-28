@@ -1,1 +1,0 @@
-T = -3.5804 + 0.3958 e^{- 0.8646 \left(- 0.7248 \operatorname{sign}{\left(5.308 - 9.8 \mathit{qprime} \right)} - 1\right)^{2}} + \frac{14.2507}{\left(0.2501 \left(1 - 0.0243 \mathit{qprime}\right)^{5} + 0.0842 \left(1 - 0.1257 \mathit{k}\right)^{3} - 0.0001 \tan{\left(0.0482 \mathit{L} + 1.5791 \right)} + 1\right)^{5}}

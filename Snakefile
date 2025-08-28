@@ -5,20 +5,20 @@ CASES = ['FP', 'CHF', 'BWR', 'MITR_A', 'MITR_B', 'MITR_C', 'XS', 'HEAT', 'REA', 
 case_list = ''.join(CASES)
 run_name = 'DEMO'
 
-rule targets:
-    input: 
-        miter_full = f'{path}{run_name}_params.txt'
+# rule targets:
+#     input: 
+#         dataset = expand("processed_datasets/{case}.pkl", case=CASES)
 
 
 rule preprocess:
     input:
-        file = 'datasets/chf_train.csv',
+        file = 'data/datasets/chf_train.csv',
     params:
         d_list = CASES,
     output:
-        dataset = expand("processed_datasets/{case}.pkl", case=CASES),
+        dataset = expand("data/processed_datasets/{case}.pkl", case=CASES),
     script:
-        'preprocessing.py'
+        'workflow/scripts/preprocessing.py'
 
 # rule hypertune_kan:
 #     input: 
@@ -37,44 +37,44 @@ rule preprocess:
 
 rule kan:
     input:
-        datasets = expand("processed_datasets/{case}.pkl", case=CASES),
+        datasets = expand("data/processed_datasets/{case}.pkl", case=CASES),
     params:
         d_list = CASES,
     output:
         y_preds = expand('results/Ys/{case}/y_pred_KAN.pkl', case=CASES),
         y_tests = expand('results/Ys/{case}/y_test_KAN.pkl', case=CASES),
     script:
-        'run.py'
+        'workflow/scripts/run.py'
 
 
 rule fnn:
     input:
-        datasets = expand("processed_datasets/{case}.pkl", case=CASES),
+        datasets = expand("data/processed_datasets/{case}.pkl", case=CASES),
     params:
         d_list = CASES,
     output:
-        model_path = expand('models/{case}'+f'__{str(dt.date.today())}.pt', case=CASES),
+        model_path = expand('fnn-models/{case}.pt', case=CASES),
         y_preds = expand('results/Ys/{case}/y_pred_FNN.pkl', case=CASES),
         y_tests = expand('results/Ys/{case}/y_test_FNN.pkl', case=CASES),
     script:
-        'fnn.py'
+        'workflow/scripts/fnn.py'
 
 rule get_fnn_plots:
     input:
         y_preds = expand('results/Ys/{case}/y_pred_FNN.pkl', case=CASES),
         y_tests = expand('results/Ys/{case}/y_test_FNN.pkl', case=CASES),
-        datasets = expand("processed_datasets/{case}.pkl", case=CASES),
+        datasets = expand("data/processed_datasets/{case}.pkl", case=CASES),
     params:
         d_list = CASES,
     output:
-        plots = expand('figures/pred-v-true/{case}'+f'_FNN_{str(dt.date.today())}.png', case=CASES)
+        plots = expand('results/figures/pred-v-true/{case}'+f'_FNN_{str(dt.date.today())}.png', case=CASES)
     script:
-        'plotting.py'
+        'workflow/scripts/plotting.py'
 
 rule get_stats_scores:
     # dummy input file
     input:
-        static_paths = expand("processed_datasets/{case}.pkl", case=CASES), 
+        static_paths = expand("data/processed_datasets/{case}.pkl", case=CASES), 
     params:
         d_list = CASES,
         trials = 30,
@@ -84,7 +84,7 @@ rule get_stats_scores:
         kan_sym_scores = f'results/stats/{run_name}/kan_symbolic_scores.pkl',
         fnn_scores = f'results/stats/{run_name}/fnn_scores.pkl',
     script:
-        'stats.py'
+        'workflow/scripts/stats.py'
 
 rule wilcoxon:
     input:
@@ -98,4 +98,46 @@ rule wilcoxon:
         kan_wilcoxon = f'results/stats/kan_wilcoxon_R2.tex',
         kan_sym_wilcoxon = f'results/stats/kan_sym_wilcoxon_R2.tex',
     script:
-        'wilcoxon.py'
+        'workflow/scripts/wilcoxon.py'
+
+rule kan_shap_values:
+    input:
+        datasets = expand("data/processed_datasets/{case}.pkl", case=CASES),
+        equations = expand("results/equations/{case}.txt", case=CASES),
+    params:
+        d_list = CASES,
+    output:
+        shap_vals = expand("results/shap-values/{case}_kan.pkl", case=CASES),
+    script:
+        'workflow/scripts/shap_vals.py'
+
+rule kan_shap_plot:
+    input:
+        shap_vals = expand("results/shap-values/{case}_kan.pkl", case=CASES),
+    params:
+        d_list = CASES,
+    output:
+        plots = expand("results/figures/shap/{case}_kan.png", case=CASES),
+    script:
+        'workflow/scripts/explainability.py'
+
+rule fnn_shap_values:
+    input:
+        model_paths = expand('fnn-models/{case}.pt', case=CASES), 
+        datasets = expand("data/processed_datasets/{case}.pkl", case=CASES),
+    params:
+        d_list = CASES,
+    output:
+        shap_vals = expand("results/shap-values/{case}_fnn.pkl", case=CASES),
+    script:
+        'workflow/scripts/fnn_shap_vals.py'
+
+rule fnn_shap_plot:
+    input:
+        shap_vals = expand("results/shap-values/{case}_fnn.pkl", case=CASES),
+    params:
+        d_list = CASES,
+    output:
+        plots = expand("results/figures/shap/{case}_kan.png", case=CASES),
+    script:
+        'workflow/scripts/plot_fnn_shap.py'

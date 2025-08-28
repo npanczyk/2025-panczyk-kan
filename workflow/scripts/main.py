@@ -136,7 +136,7 @@ class NKAN():
         # check to see if results folder exists 
         if not os.path.exists('results'):
             os.makedirs('results')
-        metrics_df.to_csv(f'results/{save_as}.csv', index=False)
+        metrics_df.to_csv(f'results/metrics/{save_as}.csv', index=False)
         return metrics_df
 
 
@@ -159,8 +159,8 @@ class NKAN():
         # this whole chunk is just writing the equations to a file
         if not os.path.exists('equations'):
             os.makedirs('equations')
-        sym_file = open(f"equations/{save_as}.txt", "w")
-        tex_file = open(f"equations/{save_as}_latex.txt", "w")
+        sym_file = open(f"results/equations/{save_as}.txt", "w")
+        tex_file = open(f"results/equations/{save_as}_latex.txt", "w")
         variable_map = get_variable_map(self.dataset['feature_labels'])
         # print(variable_map)
         for i, output in enumerate(self.dataset['output_labels']):
@@ -194,7 +194,7 @@ class NKAN():
         # save symbolic metrics to results 
         if not os.path.exists('results'):
             os.makedirs('results')
-        metrics_df.to_csv(f'results/{save_as}_symetrics.csv', index=False)
+        metrics_df.to_csv(f'results/metrics/{save_as}_symetrics.csv', index=False)
         return expressions, y_pred, y_test
 
     def get_importances(self, model, save_as):

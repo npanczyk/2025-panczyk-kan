@@ -1,1 +1,0 @@
-k = 5.363 - 5.2846 e^{- 0.7338 \left(0.0301 \tan{\left(0.1789 \left(1 - 0.02 \mathit{capture_fast}\right)^{5} - 0.2505 \left(1 - 0.02 \mathit{fission_thermal}\right)^{4} + 0.111 \left(1 - 0.02 \mathit{capture_thermal}\right)^{4} + 0.116 \left(- 0.02 \mathit{fission_fast} - 1\right)^{4} + 0.1509 \left(- 0.02 \mathit{scatter_12} - 1\right)^{4} - 4.9805 \right)} + 1\right)^{2}}

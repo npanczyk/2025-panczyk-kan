@@ -1,1 +1,0 @@
-T = - 3.3445 \left(0.1418 \left(- 0.02 \mathit{k} - 1\right)^{5} - 0.0079 \operatorname{atan}{\left(10.0 \mathit{qprime} - 5.48 \right)} - 1\right)^{5} - 6.2964 - 0.1067 e^{- 1.4077 \left(0.3595 - \operatorname{sign}{\left(4.3058 - 8.0 \mathit{qprime} \right)}\right)^{2}}

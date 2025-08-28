@@ -186,37 +186,7 @@ def load_and_metrics(dataset, model_path, params):
 
     return 
 
-def get_fnn_shap(models_dict, params_dict, device):
-    """Loads dataset and model and calculates kernel shap values. 
 
-    Args:
-        models_dict (dict): key = model name (chf, htgr, etc.),
-                            values[0] = get_dataset
-                            values[1] = model object path
-    """
-    shap_paths = {}
-    for key, values in models_dict.items():
-        params = params_dict[key]
-        dataset = values[0](cuda=True)
-        X_train = dataset['train_input'].cpu().detach().numpy()
-        X_test = dataset['test_input'].cpu().detach().numpy()
-        input_names = dataset['feature_labels']
-        output_names = dataset['output_labels']
-        save_as =  f"{key.upper()}"
-        # feed model args
-        input_size = dataset['train_input'].shape[1]
-        hidden_nodes = params['hidden_nodes']
-        output_size = dataset['train_output'].shape[1]
-        model = FNN(input_size, hidden_nodes, output_size)
-        model.load_state_dict(torch.load(values[1], weights_only=True))
-        model.eval()
-        train_samples = dataset['train_input'].shape[0]
-        k = int(np.round(0.005*train_samples*input_size))
-        if k > 100:
-            k = 100
-        path = fnn_shap(model, X_train, X_test, input_names, output_names, save_as=save_as, k=k)
-        shap_paths[key] = path
-    return shap_paths
 
 if __name__=="__main__":
     os.environ["CUDA_VISIBLE_DEVICES"]="1"
@@ -325,42 +295,20 @@ if __name__=="__main__":
         'MITR_B': 'models/MITR_B_2025-03-17.pt', 
         'MITR_C': 'models/MITR_C_2025-03-17.pt'
     }
-    shap_path_dict = {
-        # 'chf': 'shap-values/CHF_fnn_2025-03-18.pkl', 
-        # 'bwr': 'shap-values/BWR_fnn_2025-03-18.pkl', 
-        'fp': 'shap-values/FP_fnn_2025-04-03.pkl', 
-        # 'heat': 'shap-values/HEAT_fnn_2025-03-18.pkl', 
-        # 'htgr': 'shap-values/HTGR_fnn_2025-04-03.pkl', 
-        # 'mitr': 'shap-values/MITR_fnn_2025-03-18.pkl', 
-        # 'rea': 'shap-values/REA_fnn_2025-03-18.pkl', 
-        # 'xs': 'shap-values/XS_fnn_2025-04-03.pkl', 
-        # 'mitr_a': 'shap-values/MITR_A_fnn_2025-03-18.pkl', 
-        # 'mitr_b': 'shap-values/MITR_B_fnn_2025-03-18.pkl', 
-        # 'mitr_c': 'shap-values/MITR_C_fnn_2025-03-18.pkl'
-        }
 
     # # STEP 1: train FNN models and get metrics
 
-    # for case, file, model_path, y_pred_file, y_test_file in zip(snakemake.params.d_list, snakemake.input.datasets, snakemake.output.model_path, snakemake.output.y_preds, snakemake.output.y_tests):
-    #     print(f'NOW RUNNING FNN FOR... {case}')
-    #     with open(file, 'rb') as f:
-    #         dataset = pickle.load(f)
-    #     model, y_preds, y_tests = fit_fnn(dataset, pymaise_params[case], device=device, save_as=f'{case}__{str(dt.date.today())}')
-    #     torch.save(model.state_dict(), model_path)
-    #     with open(y_pred_file, "wb") as file1:
-    #         pickle.dump(y_preds, file1)
-    #     with open(y_test_file, "wb") as file2:
-    #             pickle.dump(y_tests, file2)
+    for case, file, model_path, y_pred_file, y_test_file in zip(snakemake.params.d_list, snakemake.input.datasets, snakemake.output.model_path, snakemake.output.y_preds, snakemake.output.y_tests):
+        print(f'NOW RUNNING FNN FOR... {case}')
+        with open(file, 'rb') as f:
+            dataset = pickle.load(f)
 
-    # # STEP 2: get shap values from FNN models, need model path dict from Step 1
-    # shap_paths = get_fnn_shap(model_path_dict, pymaise_params, device)
-    # print(shap_paths)
+        model, y_preds, y_tests = fit_fnn(dataset, pymaise_params[case], device=device, save_as=f'{case}')
+        torch.save(model.state_dict(), model_path)
 
-    # STEP 3: plot shap values, need shap path dict from Step 2
-    for model, path in shap_path_dict.items():
-        plot_shap(path, save_as=f'{model}_fnn', type='fnn', width=0.2)
+        with open(y_pred_file, "wb") as file1:
+            pickle.dump(y_preds, file1)
+        with open(y_test_file, "wb") as file2:
+            pickle.dump(y_tests, file2)
 
-    # # STEP 4 (optional): print shap values and save to csv
-    # for model, path in shap_path_dict.items():
-    #     print_shap(path, save_as=f'{model}', type='fnn')
  

@@ -1,1 +1,0 @@
-T = - 13.1263 \left(0.2321 \left(1 - 0.02 \mathit{k}\right)^{4} - 0.011 \tanh{\left(10.0 \mathit{qprime} - 5.472 \right)} - 1\right)^{5} - 3.3401 - 0.0846 e^{- 2.2388 \left(0.41 - \operatorname{sign}{\left(5.308 - 9.8 \mathit{qprime} \right)}\right)^{2}}

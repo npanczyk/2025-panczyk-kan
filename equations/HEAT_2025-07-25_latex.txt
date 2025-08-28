@@ -1,1 +1,0 @@
-T = 2.4588 \left(- 0.0179 \left(1 - 0.04 \mathit{mdot}\right)^{5} - 0.2438 \left(- 0.02 \mathit{k} - 1\right)^{4} - 0.0104 \tan{\left(1.9592 \mathit{qprime} + 2.2063 \right)} - 0.0003 \left|{10.0 \mathit{L} - 0.2}\right| - 1\right)^{4} + 0.163 \operatorname{sign}{\left(- 1.1222 \operatorname{sign}{\left(5.112 - 9.4 \mathit{qprime} \right)} - 0.0677 \right)} - 6.0019
