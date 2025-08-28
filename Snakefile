@@ -3,12 +3,11 @@ import datetime as dt
 CASES = ['FP', 'CHF', 'BWR', 'MITR_A', 'MITR_B', 'MITR_C', 'XS', 'HEAT', 'REA', 'HTGR']
 # CASES = ['REA', 'HTGR']
 case_list = ''.join(CASES)
-# run_name = f'{case}_{str(dt.date.today())}'
+run_name = 'DEMO'
 
-# rule targets:
-#     input: 
-#         fig_file = "figures.log",
-#         miter_full = f'{path}{run_name}_params.txt'
+rule targets:
+    input: 
+        miter_full = f'{path}{run_name}_params.txt'
 
 
 rule preprocess:
@@ -81,17 +80,17 @@ rule get_stats_scores:
         trials = 30,
         gpu = "2",
     output:
-        kan_scores = f'results/stats/{case_list}/kan_scores.pkl',
-        kan_sym_scores = f'results/stats/{case_list}/kan_symbolic_scores.pkl',
-        fnn_scores = f'results/stats/{case_list}/fnn_scores.pkl',
+        kan_scores = f'results/stats/{run_name}/kan_scores.pkl',
+        kan_sym_scores = f'results/stats/{run_name}/kan_symbolic_scores.pkl',
+        fnn_scores = f'results/stats/{run_name}/fnn_scores.pkl',
     script:
         'stats.py'
 
 rule wilcoxon:
     input:
-        kan_scores = f'results/stats/{case_list}/kan_scores.pkl',
-        kan_sym_scores = f'results/stats/{case_list}/kan_symbolic_scores.pkl',
-        fnn_scores = f'results/stats/{case_list}/fnn_scores.pkl',
+        kan_scores = f'results/stats/{run_name}/kan_scores.pkl',
+        kan_sym_scores = f'results/stats/{run_name}/kan_symbolic_scores.pkl',
+        fnn_scores = f'results/stats/{run_name}/fnn_scores.pkl',
     params:
         alpha = 0.05,
         metric = 'R2',
