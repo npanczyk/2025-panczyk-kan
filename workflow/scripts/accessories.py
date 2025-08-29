@@ -147,9 +147,9 @@ def ind_ttest(output_labels, y_test, y_pred_KAN, y_pred_FNN):
 
 def print_shap(path, save_as, type):
     df = pd.read_pickle(path)
-    if not os.path.exists('shap-values/'):
-        os.makedirs('shap-values')
-    df.to_csv(f'shap-values/{save_as}_{type}.csv')
+    if not os.path.exists('results/shap-values/'):
+        os.makedirs('results/shap-values')
+    df.to_csv(f'results/shap-values/{save_as}_{type}.csv')
     to_latex = df.to_latex(float_format="%.5f", index=True, longtable=True, caption=f'Absolute value of mean SHAP values for {type.upper()} model of {save_as.upper()} dataset.')
     print(to_latex)
     return 

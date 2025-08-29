@@ -144,9 +144,9 @@ def get_metrics(model, test_loader, scaler, dataset, save_as, device, p=20):
         metrics['R2'].append(round(r2_score(yi_test, yi_pred),p))
     metrics_df = pd.DataFrame.from_dict(metrics)
     # check to see if there 
-    if not os.path.exists('results'):
-        os.makedirs('results')
-    metrics_df.to_csv(f'results/{save_as}_FNN.csv', index=False)
+    if not os.path.exists('results/metrics'):
+        os.makedirs('results/metrics')
+    metrics_df.to_csv(f'results/metrics/{save_as}_FNN.csv', index=False)
 
     return y_preds, y_tests
 

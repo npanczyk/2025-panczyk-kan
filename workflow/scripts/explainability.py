@@ -49,8 +49,8 @@ def kan_shap(equation_file, X_train, X_test, input_names, output_names, save_as,
         shap_mean_list.append(pd.DataFrame(np.abs(shap_values).mean(axis=0),columns=[output],index=input_names))
     shap_mean = pd.concat(shap_mean_list, axis=1)
     print(shap_mean)
-    if not os.path.exists('shap-values'):
-        os.makedirs('shap-values')
+    if not os.path.exists('results/shap-values'):
+        os.makedirs('results/shap-values')
     path = f'results/shap-values/{save_as}_kan.pkl'
     shap_mean.to_pickle(path)
     return path
@@ -59,25 +59,26 @@ def fnn_shap(model, X_train, X_test, input_names, output_names, save_as, k=50, k
     """gets feature importances using kernel shap for an fnn
 
     Args:
-        model (pytorch model obj): _description_
-        X_train (numpy array): 
-        X_test (numpy array): _description_
-        input_names (_type_): _description_
-        output_names (_type_): _description_
-        save_as (_type_): _description_
+        model (pytorch model obj): saved pytorch model from fnn rule
+        X_train (numpy array): training set from pickled dataset
+        X_test (numpy array): test set from pickled dataset
+        input_names (list): feature names for case
+        output_names (list): output names for case
+        save_as (str): case name or how else to save the shap values as
         k (int, optional): Number of means used for shap.kmeans approximation of training data. Defaults to 50.
+        kcheck (bool): Whether or not to plot kmeans scatter plot
 
     Returns:
-        _type_: _description_
+        str: path to pickled shap values
     """
     model_pred = lambda inputs: model(torch.tensor(inputs, dtype=torch.float32)).cpu().detach().numpy()
     X_train_summary = shap.kmeans(X_train, k)
     explainer = shap.KernelExplainer(model_pred, X_train_summary)
     shap_values = explainer.shap_values(X_test[0:])
     shap_mean = pd.DataFrame(np.abs(shap_values).mean(axis=0),columns=[output_names],index=input_names)
-    if not os.path.exists('shap-values'):
-        os.makedirs('shap-values')
-    path = f'shap-values/{save_as}_fnn_{str(dt.date.today())}.pkl'
+    if not os.path.exists('results/shap-values'):
+        os.makedirs('results/shap-values')
+    path = f'results/shap-values/{save_as}_fnn.pkl'
     shap_mean.to_pickle(path)
     if kcheck:
         fig, ax = plt.subplots()
@@ -87,7 +88,7 @@ def fnn_shap(model, X_train, X_test, input_names, output_names, save_as, k=50, k
         ax.set_xlabel(f'{input_names[0]}')
         ax.set_ylabel(f'{input_names[1]}')
         ax.set_title(f'k = {k}')
-        plt.savefig(f'figures/fnn-shap/{save_as}_KCHECK.png', dpi=300)
+        plt.savefig(f'results/figures/fnn-shap/{save_as}_KCHECK.png', dpi=300)
     return path
 
 def plot_shap(path, save_as, type='kan', width=0.2):
@@ -124,9 +125,9 @@ def plot_shap(path, save_as, type='kan', width=0.2):
     ax.set_xticklabels(input_names, rotation=90)
     plt.subplots_adjust(bottom=0.27, left=0.15)
     plt.tight_layout()
-    if not os.path.exists('figures/shap'):
-        os.makedirs('figures/shap')
-    plt.savefig(f'figures/shap/{save_as}.png', dpi=300)
+    if not os.path.exists('results/figures/shap'):
+        os.makedirs('results/figures/shap')
+    plt.savefig(f'results/figures/shap/{save_as}.png', dpi=300)
     return fig, ax
 
 def plot_stacked(kan_path, fnn_path, save_as, width=0.2):
@@ -170,7 +171,7 @@ def plot_stacked(kan_path, fnn_path, save_as, width=0.2):
 
 if __name__=="__main__":
     shap_paths = snakemake.input.shap_vals
-    cases = snakemake.input.d_list
+    cases = snakemake.params.d_list
 
     for case, path in zip(cases, shap_paths):
         plot_shap(path, save_as=f'{case}_kan', type='kan', width=0.2)

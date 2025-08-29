@@ -171,9 +171,17 @@ cython_debug/
 datasets/chf_train.csv
 datasets/chf_valid.csv
 model/
+fnn-models/
 scratch.ipynb
 hyperparameters/
 prune_success.txt
 old/
 *.out
 .snakemake
+results/equations/*
+results/figures/*
+results/metrics/*
+results/shap-values/*
+results/stats/*
+results/Ys*
+metrics/*.csv

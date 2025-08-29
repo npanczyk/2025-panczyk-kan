@@ -1,13 +1,8 @@
 import datetime as dt
-# CASES = ['FP']
-CASES = ['FP', 'CHF', 'BWR', 'MITR_A', 'MITR_B', 'MITR_C', 'XS', 'HEAT', 'REA', 'HTGR']
-# CASES = ['REA', 'HTGR']
-case_list = ''.join(CASES)
-run_name = 'DEMO'
 
-# rule targets:
-#     input: 
-#         dataset = expand("processed_datasets/{case}.pkl", case=CASES)
+CASES = ['FP', 'CHF', 'BWR', 'MITR_A', 'MITR_B', 'MITR_C', 'XS', 'HEAT', 'REA', 'HTGR']
+
+run_name = 'DEMO'
 
 
 rule preprocess:
@@ -20,21 +15,6 @@ rule preprocess:
     script:
         'workflow/scripts/preprocessing.py'
 
-# rule hypertune_kan:
-#     input: 
-#         dataset = f'processed_datasets/{case}.pkl',
-#     params:
-#         run_name = run_name,
-#         max_evals = 1,
-#         seed = 42,
-#     output:
-#         params = f"hyperparameters/{run_name}/{run_name}_params.txt",
-#         pruned = f"hyperparameters/{run_name}/{run_name}_pruned.txt",
-#         r2 = f"hyperparameters/{run_name}/{run_name}_R2.txt",
-#         results = f"hyperparameters/{run_name}/{run_name}_results.txt",
-#     script:
-#         'hypertuning.py'
-
 rule kan:
     input:
         datasets = expand("data/processed_datasets/{case}.pkl", case=CASES),
@@ -45,7 +25,6 @@ rule kan:
         y_tests = expand('results/Ys/{case}/y_test_KAN.pkl', case=CASES),
     script:
         'workflow/scripts/run.py'
-
 
 rule fnn:
     input:
@@ -67,7 +46,7 @@ rule get_fnn_plots:
     params:
         d_list = CASES,
     output:
-        plots = expand('results/figures/pred-v-true/{case}'+f'_FNN_{str(dt.date.today())}.png', case=CASES)
+        plots = expand('results/figures/pred-v-true/{case}'+f'_FNN.png', case=CASES)
     script:
         'workflow/scripts/plotting.py'
 
@@ -138,6 +117,27 @@ rule fnn_shap_plot:
     params:
         d_list = CASES,
     output:
-        plots = expand("results/figures/shap/{case}_kan.png", case=CASES),
+        plots = expand("results/figures/shap/{case}_fnn.png", case=CASES),
     script:
         'workflow/scripts/plot_fnn_shap.py'
+
+rule build_dag:
+    input: "Snakefile"
+    output:
+        "dag.png"
+    shell:
+        "snakemake --dag | dot -Tpng > {output}"
+
+rule all:
+    input:
+        kan_y_preds = expand('results/Ys/{case}/y_pred_KAN.pkl', case=CASES),
+        fnn_y_preds = expand('results/Ys/{case}/y_pred_FNN.pkl', case=CASES),
+        fnn_plots = expand('results/figures/pred-v-true/{case}'+f'_FNN.png', case=CASES),
+        kan_stats_scores = f'results/stats/{run_name}/kan_scores.pkl',
+        kan_wilcoxon_scores = f'results/stats/kan_wilcoxon_R2.tex',
+        kan_shap_plots = expand("results/figures/shap/{case}_kan.png", case=CASES),
+        fnn_shap_plots = expand("results/figures/shap/{case}_fnn.png", case=CASES)
+
+
+
+

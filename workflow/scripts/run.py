@@ -52,7 +52,7 @@ def run_model(device, dataset, params, run_name, y_pred_file, y_test_file, lib=N
     plot_pred_v_true(
          y_preds=y_pred[:,0], 
          y_tests= y_test[:,0],
-         save_as=f'results/figures/pred-v-true/{run_name}', 
+         save_as=f'results/figures/pred-v-true/{run_name}_KAN.png', 
          output=dataset['output_labels'][0], 
          color='magenta')
     with open(y_pred_file, "wb") as file:
@@ -74,7 +74,7 @@ if __name__=="__main__":
             dataset = pickle.load(f)
         run_model(
             device=device, 
-            dataset=dataset, # unpickle
+            dataset=dataset, # unpickled
             params=hyperparams[case], 
             run_name=f"{case.upper()}",
             y_pred_file=y_pred_file,

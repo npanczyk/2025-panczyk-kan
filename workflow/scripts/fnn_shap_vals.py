@@ -130,4 +130,4 @@ if __name__ == "__main__":
     for case, dataset_file, path in zip(cases, datasets, model_paths):
         with open(dataset_file, 'rb') as f:
             dataset = pickle.load(f)
-        get_fnn_shap(case, dataset, model_path_dict, pymaise_params, device)
+        get_fnn_shap(case, dataset, path, pymaise_params, device)
