@@ -1,7 +1,21 @@
 # kan-ne
-This repository serves to reproduce the results found in *{citation here}*. 
+This repository serves to reproduce the results found in [Opening the AI black-box: Symbolic regression with Kolmogorov-Arnold Networks for advanced energy applications](https://doi.org/10.1016/j.egyai.2025.100595). 
+
 ## Paper Citation
-TBD
+Nataly R. Panczyk, Omer F. Erdem, Majdi I. Radaideh,
+Opening the AI black-box: Symbolic regression with Kolmogorov-Arnold Networks for advanced energy applications,
+Energy and AI,
+2025,
+100595,
+ISSN 2666-5468,
+https://doi.org/10.1016/j.egyai.2025.100595.
+(https://www.sciencedirect.com/science/article/pii/S2666546825001272)
+
+## Abstract: 
+While most modern machine learning methods offer speed and accuracy, few promise interpretability or explainability– two key features necessary for highly sensitive industries, like medicine, finance, and engineering. Using eight datasets representative of one especially sensitive industry, nuclear power, this work compares a traditional feedforward neural network FNN to a Kolmogorov-Arnold Network (KAN). We consider not only model performance and accuracy, but also interpretability through model architecture and explainability through a post-hoc SHapley Additive exPlanations (SHAP) analysis, a game-theory-based feature importance method. In terms of accuracy, we find KANs and FNNs comparable across all datasets, when output dimensionality is limited. KANs, which transform into symbolic equations after training, yield perfectly interpretable models while FNNs remain black-boxes. Finally, using the post-hoc explainability results from Kernel SHAP, we find that KANs learn real, physical relations from experimental data, while FNNs simply produce statistically accurate results. Overall, this analysis finds KANs a promising alternative to traditional machine learning methods, particularly in applications requiring both accuracy and comprehensibility.
+
+**Keywords**: Kolmogorov Arnold Networks; Explainable AI; Interpretable AI; Machine learning; Deep neural networks; Nuclear energy; Critical heat flux
+
 
 ## Getting Started
 ### Requirements
@@ -18,48 +32,26 @@ conda activate pykan-env
 ```
 
 ## How to Generate Results
-### KAN   
-KAN results can be reproduced by running the following three scripts, in order: `hypertuning.py`, `run.py`, `explainability.py`. 
 
-* **Hyperparameter Tuning** 
-
-    To start, run:
-    ```bash
-    python hypertuning.py
-    ```
-    This will create a `\hyperparameters` directory with a subdirectory for each model. Each subdirectory will have a `params.txt`, a `pruned.txt`, and an `R2.txt` file. These files contain the hyperparameter sets, whether the model successfully pruned or not, and the symbolic and spline R2 scores for each trial. To find the top hyperparameter results, you will need to modify the `hyperparams_dict` dictionary to correspond to your local best hyperparameter file paths in `hypersort.py`. Then, to generate a table with the results, run: 
-    ```bash
-    python hypersort.py 
-    ```
-
-* **Model Fitting, Metrics, and Equations**   
-
-    Once you've generated your best hyperparameters, modify the dictionaries of the form `model_best` to contain the best hyperparameters for each model in the script `run.py`. Then to fit each model, generate spline and symbolic metrics, and generate equations, run: 
-    ```bash 
-    python run.py
-    ```
-    The metrics will be stored in `\results` and the equations will be stored in `\equations`, named after their respective models. 
-
-* **Explainability Analysis**   
-
-    After generating your equations, you can start the explainability analysis. First, open `explainability.py` and under the main function, modify the `datasets_dict` to correspond to your equation filepaths. Then, you will need to generate the shap values and save them for plotting later. To do this, run:
-    ```bash
-    python explainability.py
-    ```
-    Then, using the path dictionary printed to the command line, modify the `shap_path_dict` to match your local filepaths to the saved shap values (these are .pkl objects). Next, comment out the `paths_dict = ` line and uncomment the for loop and the `plot_shap()` function call lines. Re-run:
-    ```bash
-    python explainability.py
-    ```
-    Optionally, to save your generated shap values to a csv file and to print them to a latex table, uncomment and run the last for loop in the file.
-
-### FNN   
-
-To reproduce the FNN results, you will run 
+All results reproducible via 
 
 ```bash
-python fnn.py
+snakemake -j1
 ```
-three times, uncommenting a unique step in the main function each time. In Step 1, you will generate a model path dictionary. Modify `model_path_dict` after running Step 1 to correspond to your local file path before running Step 2. In Step 2, you will generate a shap path dictionary. Modify `shap_path_dict` after running Step 2 to correspond to your local file path before running Step 3. In Step 3, you will plot the shap values generated in Step 2. Optionally, if you would like to print the shap values and save them to separate csv files, you can run Step 4 simulataneously as Step 3 by uncommenting the associated lines. Otherwise, each step should be run in isolation (all other steps commented out). 
+
+Note: Due to the the stochastic nature of KANs, the authors have found some unlucky networks to yield NaNs in the test set predictions due to division by zero or imaginary numbers after converting a KAN's B-splines to symbolic expressions. If you encounter such a network, simply re-run the script, the second attempt is unlikely to be unlucky too.
+
+You can re-run any individual step in this workflow via 
+```bash
+snakemake RULE_NAME_HERE -j1
+```
+For the KAN and associated equation generation, that would be
+```bash
+snakemake kan -j1
+```
+
+Note, we have not provided hyperparameter tuning in the snakemake workflow, but feel free to explore ``workflow/scripts/hypertuning.py" for a good place to start. 
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
