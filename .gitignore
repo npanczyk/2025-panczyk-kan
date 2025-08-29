@@ -168,8 +168,10 @@ cython_debug/
 #.idea/
 
 # Files that shouldn't be published
-datasets/chf_train.csv
-datasets/chf_valid.csv
+chf_train.csv
+chf_valid.csv
+CHF.pkl
+
 model/
 fnn-models/*
 scratch.ipynb
