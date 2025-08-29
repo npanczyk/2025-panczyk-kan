@@ -2,12 +2,26 @@ import datetime as dt
 
 CASES = ['FP', 'CHF', 'BWR', 'MITR_A', 'MITR_B', 'MITR_C', 'XS', 'HEAT', 'REA', 'HTGR']
 
+import os
+RAW_DATA_FILES = expand("data/datasets/{inpfile}", inpfile=os.listdir("data/datasets")
+)
+
 run_name = 'DEMO'
 
+rule all:
+    input:
+        # kan_y_preds = expand('results/Ys/{case}/y_pred_KAN.pkl', case=CASES),
+        # fnn_y_preds = expand('results/Ys/{case}/y_pred_FNN.pkl', case=CASES),
+        fnn_plots = expand('results/figures/pred-v-true/{case}'+f'_FNN.png', case=CASES),
+        # kan_stats_scores = f'results/stats/{run_name}/kan_scores.pkl',
+        kan_wilcoxon_scores = f'results/stats/kan_wilcoxon_R2.tex',
+        kan_shap_plots = expand("results/figures/shap/{case}_kan.png", case=CASES),
+        fnn_shap_plots = expand("results/figures/shap/{case}_fnn.png", case=CASES),
+        dag = "dag.png"
 
 rule preprocess:
     input:
-        file = 'data/datasets/chf_train.csv',
+        RAW_DATA_FILES,
     params:
         d_list = CASES,
     output:
@@ -23,6 +37,7 @@ rule kan:
     output:
         y_preds = expand('results/Ys/{case}/y_pred_KAN.pkl', case=CASES),
         y_tests = expand('results/Ys/{case}/y_test_KAN.pkl', case=CASES),
+        equations = expand("results/equations/{case}.txt", case=CASES),
     script:
         'workflow/scripts/run.py'
 
@@ -53,7 +68,8 @@ rule get_fnn_plots:
 rule get_stats_scores:
     # dummy input file
     input:
-        static_paths = expand("data/processed_datasets/{case}.pkl", case=CASES), 
+        raw_data = RAW_DATA_FILES,
+        datasets = expand("data/processed_datasets/{case}.pkl", case=CASES), 
     params:
         d_list = CASES,
         trials = 30,
@@ -127,17 +143,3 @@ rule build_dag:
         "dag.png"
     shell:
         "snakemake --dag | dot -Tpng > {output}"
-
-rule all:
-    input:
-        kan_y_preds = expand('results/Ys/{case}/y_pred_KAN.pkl', case=CASES),
-        fnn_y_preds = expand('results/Ys/{case}/y_pred_FNN.pkl', case=CASES),
-        fnn_plots = expand('results/figures/pred-v-true/{case}'+f'_FNN.png', case=CASES),
-        kan_stats_scores = f'results/stats/{run_name}/kan_scores.pkl',
-        kan_wilcoxon_scores = f'results/stats/kan_wilcoxon_R2.tex',
-        kan_shap_plots = expand("results/figures/shap/{case}_kan.png", case=CASES),
-        fnn_shap_plots = expand("results/figures/shap/{case}_fnn.png", case=CASES)
-
-
-
-
