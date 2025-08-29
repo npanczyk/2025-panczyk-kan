@@ -171,7 +171,7 @@ cython_debug/
 datasets/chf_train.csv
 datasets/chf_valid.csv
 model/
-fnn-models/
+fnn-models/*
 scratch.ipynb
 hyperparameters/
 prune_success.txt
@@ -185,3 +185,4 @@ results/shap-values/*
 results/stats/*
 results/Ys*
 metrics/*.csv
+!/results/**/.gitkeep
