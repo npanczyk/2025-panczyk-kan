@@ -1,0 +1,1 @@
+T = 8.3515 \left(- 0.006 \tan{\left(1.9573 \mathit{qprime} - 4.1887 \right)} - 0.00200271606445313 \left|{\mathit{L}}\right| - 0.0013 \left|{9.0 \mathit{k} - 1.02}\right| - 1\right)^{4} + 0.1613 \operatorname{sign}{\left(- 1.2303 \operatorname{sign}{\left(4.896 - 9.0 \mathit{qprime} \right)} - 0.0356 - 0.0237 e^{- 100.0 \left(0.14 - \mathit{T_in}\right)^{2}} \right)} - 8.2982
