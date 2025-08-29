@@ -1,1 +1,0 @@
-k = 4.125 \sin{\left(0.016 \tan{\left(0.0733 \left(1 - 0.02 \mathit{capture_fast}\right)^{4} - 0.1099 \left(1 - 0.02 \mathit{fission_thermal}\right)^{3} + 0.0368 \left(1 - 0.02 \mathit{capture_thermal}\right)^{4} + 0.0386 \left(- 0.02 \mathit{fission_fast} - 1\right)^{4} + 0.0479 \left(- 0.02 \mathit{scatter_12} - 1\right)^{4} + 1.4986 \right)} + 6.2148 \right)} + 4.0213
