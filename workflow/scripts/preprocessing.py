@@ -8,7 +8,7 @@ import pickle
 from functools import partial
 
 
-def get_chf(synthetic=False, shuffle=False, cuda=False):
+def get_chf(synthetic=True, shuffle=False, cuda=False):
     """
     Gets data for CHF prediction.
 
@@ -29,11 +29,11 @@ def get_chf(synthetic=False, shuffle=False, cuda=False):
         dict: a dictionary containing four PyTorch tensors (train_input, train_output, test_input, test_output), y scaler, and feature/output labels
     """
     if synthetic==False:
-        train_df = pd.read_csv('datasets/chf_train.csv')
-        test_df = pd.read_csv('datasets/chf_valid.csv')
+        train_df = pd.read_csv('data/datasets/chf_train.csv')
+        test_df = pd.read_csv('data/datasets/chf_valid.csv')
     else:
-        train_df = pd.read_csv('datasets/chf_train_synth.csv')
-        test_df = pd.read_csv('datasets/chf_test_synth.csv')
+        train_df = pd.read_csv('data/datasets/chf_train_synth.csv')
+        test_df = pd.read_csv('data/datasets/chf_test_synth.csv')
     if cuda:
         device = 'cuda'
     else:
@@ -98,8 +98,8 @@ def get_mitr(test_split=0.3, shuffle=False, random_state=42, cuda=False, region=
     elif region.upper() == 'C':
         output_cols = ['C-1','C-2','C-3','C-4','C-5','C-6','C-7','C-8','C-9','C-10','C-11','C-12','C-13','C-14','C-15']
 
-    features_df = pd.read_csv('datasets/crx.csv')
-    outputs_df = pd.read_csv('datasets/powery.csv', usecols=output_cols)
+    features_df = pd.read_csv('data/datasets/crx.csv')
+    outputs_df = pd.read_csv('data/datasets/powery.csv', usecols=output_cols)
     if shuffle==False:
         x_train, x_test, y_train, y_test = train_test_split(
         features_df, outputs_df, test_size=0.3, random_state=random_state)
@@ -160,8 +160,8 @@ def get_xs(test_split=0.3, shuffle=False, random_state=42, cuda=False):
     Returns:
         dict: a dictionary containing four PyTorch tensors (train_input, train_output, test_input, test_output), y scaler, and feature/output labels.
     """
-    features_df = pd.read_csv('datasets/xs.csv').iloc[:,[0,1,2,3,4,5,6,7]]
-    outputs_df = pd.read_csv('datasets/xs.csv').iloc[:, [8]]
+    features_df = pd.read_csv('data/datasets/xs.csv').iloc[:,[0,1,2,3,4,5,6,7]]
+    outputs_df = pd.read_csv('data/datasets/xs.csv').iloc[:, [8]]
     if shuffle==False:
         x_train, x_test, y_train, y_test = train_test_split(
         features_df, outputs_df, test_size=0.3, random_state=random_state)
@@ -234,8 +234,8 @@ def get_fp(test_split=0.3, shuffle=False, random_state=42, cuda=False):
     Returns:
         dict: a dictionary containing four PyTorch tensors (train_input, train_output, test_input, test_output), y scaler, and feature/output labels.
     """
-    features_df = pd.read_csv('datasets/fp_inp.csv')
-    outputs_df = pd.read_csv('datasets/fp_out.csv')
+    features_df = pd.read_csv('data/datasets/fp_inp.csv')
+    outputs_df = pd.read_csv('data/datasets/fp_out.csv')
     if shuffle==False:
         x_train, x_test, y_train, y_test = train_test_split(
         features_df, outputs_df, test_size=0.3, random_state=42)
@@ -294,8 +294,8 @@ def get_heat(test_split=0.3, shuffle=False, random_state=42, cuda=False):
     Returns:
         dict: a dictionary containing four PyTorch tensors (train_input, train_output, test_input, test_output), y scaler, and feature/output labels.
     """
-    features_df = pd.read_csv('datasets/heat.csv').iloc[:,[0,1,2,3,4,5,6]]
-    outputs_df = pd.read_csv('datasets/heat.csv').iloc[:, [7]]
+    features_df = pd.read_csv('data/datasets/heat.csv').iloc[:,[0,1,2,3,4,5,6]]
+    outputs_df = pd.read_csv('data/datasets/heat.csv').iloc[:, [7]]
     if shuffle==False:
         x_train, x_test, y_train, y_test = train_test_split(
         features_df, outputs_df, test_size=0.3, random_state=random_state)
@@ -355,8 +355,8 @@ def get_rea(test_split=0.3, shuffle=False, random_state=42, cuda=False):
     Returns:
         dict: a dictionary containing four PyTorch tensors (train_input, train_output, test_input, test_output), y scaler, and feature/output labels.
     """
-    features_df = pd.read_csv('datasets/rea_inputs.csv')
-    outputs_df = pd.read_csv('datasets/rea_outputs.csv')
+    features_df = pd.read_csv('data/datasets/rea_inputs.csv')
+    outputs_df = pd.read_csv('data/datasets/rea_outputs.csv')
     if shuffle==False:
         x_train, x_test, y_train, y_test = train_test_split(
         features_df, outputs_df, test_size=0.3, random_state=random_state)
@@ -433,8 +433,8 @@ def get_bwr(test_split=0.3, shuffle=False, random_state=42, cuda=False):
     Returns:
         dict: a dictionary containing four PyTorch tensors (train_input, train_output, test_input, test_output), y scaler, and feature/output labels.
     """
-    features_df = pd.read_csv('datasets/bwr_input.csv')
-    outputs_df = pd.read_csv('datasets/bwr_output.csv')
+    features_df = pd.read_csv('data/datasets/bwr_input.csv')
+    outputs_df = pd.read_csv('data/datasets/bwr_output.csv')
     if shuffle==False:
         x_train, x_test, y_train, y_test = train_test_split(
         features_df, outputs_df, test_size=0.3, random_state=random_state)
@@ -475,8 +475,8 @@ def get_bwr(test_split=0.3, shuffle=False, random_state=42, cuda=False):
 
 def get_htgr(shuffle=False, random_state=42, cuda=False, quadrant=None):
     # these files have a 70-30 train test split
-    train_df = pd.read_csv('datasets/htgr_train.csv')
-    test_df = pd.read_csv('datasets/htgr_valid.csv')
+    train_df = pd.read_csv('data/datasets/htgr_train.csv')
+    test_df = pd.read_csv('data/datasets/htgr_valid.csv')
     if cuda:
         device = 'cuda'
     else:
@@ -551,7 +551,7 @@ def reflect_htgr(test_split=0.3, random_state=42, normalize=False):
     theta_cols = [f"theta{i + 1}" for i in range(8)]
     flux_cols = [f"fluxQ{i + 1}" for i in range(4)]
     data = (
-            pd.read_csv('datasets/microreactor.csv', header="infer")
+            pd.read_csv('data/datasets/microreactor.csv', header="infer")
             .to_xarray()
             .to_array()
             .transpose(..., "variable")
@@ -584,8 +584,8 @@ def reflect_htgr(test_split=0.3, random_state=42, normalize=False):
             df['fluxQ2'] = df['fluxQ2']/total
             df['fluxQ3'] = df['fluxQ3']/total
             df['fluxQ4'] = df['fluxQ4']/total
-    train_df.to_csv('datasets/htgr_train.csv')
-    test_df.to_csv('datasets/htgr_valid.csv')
+    train_df.to_csv('data/datasets/htgr_train.csv')
+    test_df.to_csv('data/datasets/htgr_valid.csv')
     return
 
 def mult_samples(data):

@@ -173,7 +173,7 @@ chf_valid.csv
 CHF.pkl
 
 model/
-fnn-models/*
+fnn-models/
 scratch.ipynb
 hyperparameters/
 prune_success.txt
@@ -188,3 +188,4 @@ results/stats/*
 results/Ys*
 metrics/*.csv
 !/results/**/.gitkeep
+processed_datasets/
