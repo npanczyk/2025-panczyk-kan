@@ -39,7 +39,7 @@ All results reproducible via
 snakemake -j1
 ```
 
-Note: Due to the the stochastic nature of KANs, the authors have found some unlucky networks to yield NaNs in the test set predictions due to division by zero or imaginary numbers after converting a KAN's B-splines to symbolic expressions. If you encounter such a network, simply re-run the script, the second attempt is unlikely to be unlucky too.
+Note #1: Due to the the stochastic nature of KANs, the authors have found some unlucky networks to yield NaNs in the test set predictions due to division by zero or imaginary numbers after converting a KAN's B-splines to symbolic expressions. If you encounter such a network, simply re-run the script, the second attempt is unlikely to be unlucky too.
 
 You can re-run any individual step in this workflow via 
 ```bash
@@ -50,7 +50,9 @@ For the KAN and associated equation generation, that would be
 snakemake kan -j1
 ```
 
-Note: we have not provided hyperparameter tuning in the snakemake workflow, but feel free to explore ``workflow/scripts/hypertuning.py" for a good place to start. 
+Note #2: We have not provided hyperparameter tuning in the snakemake workflow, but feel free to explore ``workflow/scripts/hypertuning.py" for a good place to start. 
+
+Note #3: Since the real CHF dataset used in this analysis is not public, we have provided synthetic versions of this dataset in ``data/datasets." Results using these synthetic data will vary from those presented in the paper.
 
 ## License
 
