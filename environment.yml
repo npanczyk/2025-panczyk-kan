@@ -1,7 +1,9 @@
 name: pykan-env
 channels:
-  - https://repo.anaconda.com/pkgs/main
-  - https://repo.anaconda.com/pkgs/r
+  - conda-forge
+  - bioconda
+  - pytorch
+  - defaults
 dependencies:
   - python==3.9.18
   - ipykernel
@@ -18,4 +20,8 @@ dependencies:
   - shap
   - snakemake-minimal
   - graphviz
+  - pip
+  - pip: 
+    - pykan
+
 
