@@ -181,11 +181,11 @@ old/
 *.out
 .snakemake
 results/equations/*
-results/figures/*
+results/figures/pred-v-true/*
+results/figures/shap/*
 results/metrics/*
 results/shap-values/*
 results/stats/*
 results/Ys*
 metrics/*.csv
 !/results/**/.gitkeep
-processed_datasets/
