@@ -50,9 +50,9 @@ For the KAN and associated equation generation, that would be
 snakemake kan -j1
 ```
 
-Note #2: We have not provided hyperparameter tuning in the snakemake workflow, but feel free to explore ``workflow/scripts/hypertuning.py" for a good place to start. 
+Note #2: We have not provided hyperparameter tuning in the snakemake workflow, but feel free to explore ```workflow/scripts/hypertuning.py``` for a good place to start. 
 
-Note #3: Since the real CHF dataset used in this analysis is not public, we have provided synthetic versions of this dataset in ``data/datasets." Results using these synthetic data will vary from those presented in the paper.
+Note #3: Since the real CHF dataset used in this analysis is not public, we have provided synthetic versions of this dataset in ```data/datasets```. Results using these synthetic data will vary from those presented in the paper.
 
 ## License
 
