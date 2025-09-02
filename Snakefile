@@ -72,7 +72,8 @@ rule get_stats_scores:
         datasets = expand("data/processed_datasets/{case}.pkl", case=CASES), 
     params:
         d_list = CASES,
-        trials = 30,
+        trials = 1, # for testing purposes only
+        # trials = 30, 
         gpu = "2",
     output:
         kan_scores = f'results/stats/{run_name}/kan_scores.pkl',
@@ -104,7 +105,7 @@ rule kan_shap_values:
     output:
         shap_vals = expand("results/shap-values/{case}_kan.pkl", case=CASES),
     script:
-        'workflow/scripts/shap_vals.py'
+        'workflow/scripts/kan_shap_vals.py'
 
 rule kan_shap_plot:
     input:
